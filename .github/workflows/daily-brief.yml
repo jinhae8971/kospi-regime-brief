@@ -1,0 +1,44 @@
+name: Daily Regime Brief
+
+on:
+  schedule:
+    # 06:00 KST on weekdays. KST = UTC+9, so 21:00 UTC the prior day.
+    # UTC Sun(0)-Thu(4) -> KST Mon-Fri. Saturday/Sunday KST excluded.
+    - cron: "0 21 * * 0-4"
+  workflow_dispatch:        # manual test trigger
+
+concurrency:
+  group: regime-brief
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - run: pip install -r requirements.txt
+      - name: Send daily brief
+        env:
+          TELEGRAM_TOKEN:   ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TZ: "Asia/Seoul"
+        run: python daily_brief.py
+      - name: Notify on failure
+        if: failure()
+        env:
+          TELEGRAM_TOKEN:   ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          python - <<'EOF'
+          import os, requests
+          requests.post(
+              f"https://api.telegram.org/bot{os.environ['TELEGRAM_TOKEN']}/sendMessage",
+              json={"chat_id": os.environ["TELEGRAM_CHAT_ID"],
+                    "text": "❌ Daily Regime Brief 실행 실패 — Actions 로그 확인"},
+              timeout=10)
+          EOF

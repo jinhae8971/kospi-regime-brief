@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>코스피 2026 조정 비교</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap');
+
+:root{
+  --bg:#0d1015; --panel:#151b23; --panel2:#1a212b;
+  --line:#29313d; --line2:#353f4d;
+  --ink:#e9e4d9; --dim:#98a2b0; --faint:#5e6a79;
+  --teal:#56c2d0; --teal-dk:#2c6b74;
+  --amber:#eaa23c; --red:#e6564c;
+  --amber-bg:rgba(234,162,60,.10);
+  --teal-bg:rgba(86,194,208,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:'Inter',-apple-system,sans-serif;
+  line-height:1.5; padding:22px 16px 60px;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:980px;margin:0 auto}
+
+/* ---- header ---- */
+.eyebrow{
+  font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.22em;
+  color:var(--teal); text-transform:uppercase; margin-bottom:10px;
+}
+h1{
+  font-family:'Space Grotesk',sans-serif; font-weight:700;
+  font-size:clamp(25px,5.4vw,40px); line-height:1.04; letter-spacing:-.015em;
+}
+h1 em{font-style:normal;color:var(--amber)}
+.sub{color:var(--dim);font-size:14px;margin-top:11px;max-width:62ch}
+.verdict-tag{
+  display:inline-flex;align-items:center;gap:8px;margin-top:16px;
+  background:var(--amber-bg);border:1px solid rgba(234,162,60,.4);
+  border-radius:3px;padding:7px 13px;
+  font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--amber);font-weight:500;
+}
+.verdict-tag b{color:var(--ink);font-weight:600}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--amber);box-shadow:0 0 8px var(--amber)}
+
+.divider{height:1px;background:var(--line);margin:30px 0}
+
+/* ---- section label ---- */
+.seclabel{
+  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;
+  color:var(--faint);text-transform:uppercase;margin-bottom:14px;
+  display:flex;align-items:center;gap:10px;
+}
+.seclabel::before{content:'';width:14px;height:1px;background:var(--line2)}
+
+/* ---- chart ---- */
+.chart-card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:18px 14px 12px}
+svg{display:block;width:100%;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:16px 22px;margin-top:6px;padding:0 6px}
+.lg{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--dim)}
+.lg .sw{width:11px;height:11px;border-radius:50%}
+.cap-note{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--faint);margin-top:10px;padding:0 6px}
+
+/* ---- matrix ---- */
+.matrix-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:13px}
+th,td{text-align:left;padding:12px 14px;vertical-align:top;border-bottom:1px solid var(--line)}
+thead th{
+  background:var(--panel2);position:sticky;top:0;
+  font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;
+}
+thead th .when{display:block;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--faint);font-weight:400;margin-top:3px;letter-spacing:.02em}
+tbody tr:last-child td{border-bottom:none}
+td.rowlabel,th.rowlabel{
+  background:var(--panel);position:sticky;left:0;z-index:2;
+  font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--dim);
+  letter-spacing:.02em;white-space:nowrap;border-right:1px solid var(--line);
+  font-weight:500;
+}
+thead th.rowlabel{z-index:3;background:var(--panel2)}
+.num{font-family:'IBM Plex Mono',monospace;font-weight:500}
+.col-now{background:var(--amber-bg)}
+thead th.col-now{background:rgba(234,162,60,.16);color:var(--amber)}
+.tag{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10.5px;padding:2px 7px;border-radius:3px;font-weight:500;letter-spacing:.02em}
+.t-exo{background:var(--teal-bg);color:var(--teal);border:1px solid var(--teal-dk)}
+.t-endo{background:var(--amber-bg);color:var(--amber);border:1px solid rgba(234,162,60,.45)}
+.t-v{color:var(--teal);font-weight:600}
+.t-q{color:var(--amber);font-weight:600}
+.down{color:var(--red)}
+
+/* ---- verdict cards ---- */
+.cards{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:680px){.cards{grid-template-columns:repeat(3,1fr)}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 16px 17px;position:relative;overflow:hidden}
+.card.diff{border-color:rgba(234,162,60,.4)}
+.card .idx{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--amber);letter-spacing:.1em}
+.card h3{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;margin:8px 0 7px;line-height:1.25}
+.card p{font-size:12.5px;color:var(--dim);line-height:1.55}
+.card p b{color:var(--ink);font-weight:600}
+
+.counter{margin-top:14px;background:var(--teal-bg);border:1px solid var(--teal-dk);border-radius:8px;padding:15px 16px}
+.counter .ct-lab{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--teal);text-transform:uppercase;margin-bottom:7px}
+.counter p{font-size:13px;color:var(--ink);line-height:1.6}
+.counter p b{color:var(--teal)}
+
+.bottomline{margin-top:14px;border-left:3px solid var(--amber);padding:4px 0 4px 15px}
+.bottomline p{font-size:13.5px;line-height:1.6}
+.bottomline b{color:var(--amber)}
+
+.foot{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--faint);margin-top:26px;line-height:1.7}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow">KOSPI Correction Regime Analysis · 2026</div>
+  <h1>올해 코스피 4번의 조정,<br><em>이번이 정말 다른가?</em></h1>
+  <p class="sub">2026년 서킷브레이커 4회(3/4·3/9·6/8·6/23)를 같은 틀로 비교. 핵심 질문은 낙폭 크기가 아니라 <b style="color:var(--ink)">드라이버가 외생 충격이냐, 랠리 자체의 내생적 과열이냐</b>, 그리고 <b style="color:var(--ink)">연준 레짐이 바뀐 뒤냐</b>입니다.</p>
+  <div class="verdict-tag"><span class="dot"></span>판정:&nbsp;<b>구조적으로 다름</b> — 단, 레짐 전환은 아직 미확정</div>
+
+  <div class="divider"></div>
+
+  <!-- ===== TRAJECTORY ===== -->
+  <div class="seclabel">코스피 2026 궤적 · 조정마다 V로 복구 → 이번엔 물음표</div>
+  <div class="chart-card">
+    <svg viewBox="0 0 1000 360" role="img" aria-label="코스피 2026 궤적">
+      <defs>
+        <linearGradient id="fill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#56c2d0" stop-opacity="0.16"/>
+          <stop offset="100%" stop-color="#56c2d0" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+
+      <!-- gridlines -->
+      <g font-family="IBM Plex Mono" font-size="10" fill="#5e6a79">
+        <line x1="60" y1="52.4" x2="960" y2="52.4" stroke="#29313d" stroke-width="1"/>
+        <text x="20" y="56">9,000</text>
+        <line x1="60" y1="114.3" x2="960" y2="114.3" stroke="#29313d" stroke-width="1"/>
+        <text x="20" y="118">8,000</text>
+        <line x1="60" y1="176.2" x2="960" y2="176.2" stroke="#29313d" stroke-width="1"/>
+        <text x="20" y="180">7,000</text>
+        <line x1="60" y1="238.1" x2="960" y2="238.1" stroke="#29313d" stroke-width="1"/>
+        <text x="20" y="242">6,000</text>
+        <line x1="60" y1="300" x2="960" y2="300" stroke="#353f4d" stroke-width="1"/>
+        <text x="20" y="304">5,000</text>
+      </g>
+
+      <!-- area fill -->
+      <path d="M69,269 L300,235 L360,297 L470,232 L620,139 L700,111 L730,151 L780,111 L880,45 L915,102 L915,300 L69,300 Z" fill="url(#fill)"/>
+
+      <!-- main line -->
+      <polyline points="69,269 300,235 360,297 470,232 620,139 700,111 730,151 780,111 880,45 915,102"
+        fill="none" stroke="#56c2d0" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+
+      <!-- forked projection -->
+      <path d="M915,102 L978,62" fill="none" stroke="#56c2d0" stroke-width="1.6" stroke-dasharray="3 4" opacity="0.55"/>
+      <path d="M915,102 L978,156" fill="none" stroke="#e6564c" stroke-width="1.6" stroke-dasharray="3 4" opacity="0.6"/>
+      <text x="984" y="64" font-family="Space Grotesk" font-size="15" font-weight="700" fill="#eaa23c">?</text>
+
+      <!-- correction markers -->
+      <!-- Iran -->
+      <circle cx="360" cy="297" r="6" fill="#0d1015" stroke="#56c2d0" stroke-width="2.4"/>
+      <text x="360" y="324" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" fill="#56c2d0" font-weight="500">3/4·3/9</text>
+      <text x="360" y="337" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#5e6a79">이란전쟁</text>
+      <!-- semi -->
+      <circle cx="730" cy="151" r="6" fill="#0d1015" stroke="#56c2d0" stroke-width="2.4"/>
+      <text x="730" y="142" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" fill="#56c2d0" font-weight="500">6/8</text>
+      <text x="688" y="172" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#5e6a79">반도체</text>
+      <!-- ATH -->
+      <circle cx="880" cy="45" r="4" fill="#98a2b0"/>
+      <text x="880" y="34" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#98a2b0">9,114 ATH</text>
+      <!-- now -->
+      <circle cx="915" cy="102" r="7" fill="#eaa23c" stroke="#0d1015" stroke-width="2"/>
+      <text x="915" y="200" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#eaa23c" font-weight="600">6/23</text>
+      <text x="915" y="214" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#e6564c" font-weight="500">−9.99%</text>
+      <text x="915" y="227" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#98a2b0">8,204</text>
+
+      <!-- x axis ticks -->
+      <g font-family="IBM Plex Mono" font-size="10" fill="#5e6a79" text-anchor="middle">
+        <text x="69" y="350">JAN</text>
+        <text x="470" y="350">APR</text>
+        <text x="915" y="350">JUN 23</text>
+      </g>
+    </svg>
+    <div class="legend">
+      <div class="lg"><span class="sw" style="background:#56c2d0"></span>외생 충격형 조정 — 모두 V로 복구</div>
+      <div class="lg"><span class="sw" style="background:#eaa23c"></span>내생/레짐형 조정 — 복구 미확정</div>
+    </div>
+    <div class="cap-note">* 문서로 확인된 변곡점(5,042 / 6,100 / 7,400 / 9,114 / 8,204)을 잇는 궤적 · 틱 데이터 아님</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ===== MATRIX ===== -->
+  <div class="seclabel">동일 틀 비교 매트릭스</div>
+  <div class="matrix-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th class="rowlabel">구분</th>
+          <th>3월 초<span class="when">3/4 · 3/9</span></th>
+          <th>6월 초<span class="when">6/5 · 6/8</span></th>
+          <th class="col-now">6/23 (어제)<span class="when">CB #4</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="rowlabel">낙폭 / 레벨</td>
+          <td><span class="num down">−8.1%</span> ×2 · 저점 <span class="num">5,042</span></td>
+          <td><span class="num down">−5.5%→−8.3%</span> · <span class="num">7,400</span></td>
+          <td class="col-now"><span class="num down">−9.99%</span> · <span class="num">9,114→8,204</span></td>
+        </tr>
+        <tr>
+          <td class="rowlabel">서킷브레이커</td>
+          <td>올해 1·2번째</td>
+          <td>올해 3번째</td>
+          <td class="col-now">올해 4번째 · <b>역대 최대 낙폭</b></td>
+        </tr>
+        <tr>
+          <td class="rowlabel">1차 트리거</td>
+          <td>미·이란 전쟁 발발</td>
+          <td>글로벌 반도체(브로드컴)+환율</td>
+          <td class="col-now">AI·반도체 투매 + 시총 역전</td>
+        </tr>
+        <tr>
+          <td class="rowlabel">드라이버 유형</td>
+          <td><span class="tag t-exo">외생 · 지정학/에너지</span></td>
+          <td><span class="tag t-exo">외생 · 단발 섹터실적</span></td>
+          <td class="col-now"><span class="tag t-endo">내생 · 밸류/포지션 과열</span></td>
+        </tr>
+        <tr>
+          <td class="rowlabel">연준 레짐</td>
+          <td>인하 기대 유지</td>
+          <td>인하 기대 잔존</td>
+          <td class="col-now"><b>인하→인상 플립</b><br>(6/17 워시 FOMC)</td>
+        </tr>
+        <tr>
+          <td class="rowlabel">유가</td>
+          <td>폭등 ($100 우려)</td>
+          <td>고점 대비 안정화</td>
+          <td class="col-now">하락 (이란 완화)</td>
+        </tr>
+        <tr>
+          <td class="rowlabel">금리·달러·VIX</td>
+          <td>금리<span class="num">↑</span> · USD<span class="num">↑</span></td>
+          <td>박스권 · 원<span class="num">약세</span></td>
+          <td class="col-now">금리<span class="num">↓</span> · USD<span class="num">↑</span> · VIX <span class="num">+13.8%</span></td>
+        </tr>
+        <tr>
+          <td class="rowlabel">외국인 수급</td>
+          <td>순매도</td>
+          <td>주간 <span class="num">−4.3조</span></td>
+          <td class="col-now">당일 <span class="num">−1.2조</span></td>
+        </tr>
+        <tr>
+          <td class="rowlabel">회복 패턴 (실측)</td>
+          <td><span class="t-v">완전 V</span> → 신고가</td>
+          <td><span class="t-v">격렬 V (2주)</span> → 9,114</td>
+          <td class="col-now"><span class="t-q">미정</span> · 분기점=마이크론</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ===== VERDICT ===== -->
+  <div class="seclabel">무엇이 다른가 — 구조적 차별점 3</div>
+  <div class="cards">
+    <div class="card diff">
+      <div class="idx">01 / 레짐</div>
+      <h3>유동성 쿠션이 처음으로 반대로</h3>
+      <p>1·2차는 연준 <b>인하 기대</b>가 살아있을 때. 6/23은 6/17 워시 FOMC가 닷플롯을 인하→인상으로 뒤집은 <b>직후</b> 첫 조정. 모든 V회복을 떠받친 멀티플 천장이 사라짐.</p>
+    </div>
+    <div class="card diff">
+      <div class="idx">02 / 트리거</div>
+      <h3>외부 충격이 아닌 자기 과열</h3>
+      <p>전쟁·브로드컴은 <b>외생</b> → 기다리면 소멸. 6/23은 밸류·레버리지 ETF·<b>시총 역전(꼭지 신호)</b>이 균열난 <b>내생적</b> 조정 → 시간이 해결 안 함.</p>
+    </div>
+    <div class="card diff">
+      <div class="idx">03 / 위치</div>
+      <h3>사상 최고가에서 발생</h3>
+      <p>1·2차는 더 낮은 레벨(5,042·7,400)에서 터짐. 6/23은 <b>역대 최고가 9,114</b>·최고 밸류에서 꺾여 되돌림 여력과 심리 충격이 큼.</p>
+    </div>
+  </div>
+
+  <div class="counter">
+    <div class="ct-lab">정직한 반대 근거 — 레짐 전환으로 단정 금지</div>
+    <p>그러나 6/23 <b>당일 지문은 금리↓·안전자산 회피</b> = "새 긴축 쇼크"가 아니라 포지션 청산. 또 <b>~450조 예탁금·개인 빚투</b> 등 저가매수 기반과 <b>HBM 품절(마이크론 sold-out)</b> 실적 엔진은 아직 안 깨짐. 셋 다 직전 V회복을 만든 힘이 여전히 살아있다는 뜻.</p>
+  </div>
+
+  <div class="bottomline">
+    <p><b>한 줄 결론:</b> 트리거 구조(외생→내생)와 매크로 쿠션(인하→인상) 두 축에서 <b>이번은 구조적으로 다르다</b>. 단 당일 메커니즘은 청산형이고 저가매수·실적 엔진은 건재 → <b>V냐 lower-high냐의 1차 분기점은 오늘 밤 마이크론</b>.</p>
+  </div>
+
+  <div class="foot">
+    SOURCES — 서킷브레이커 이력/낙폭: 나무위키·이투데이·MBC · 매크로 지문: Trading Economics·Yahoo Finance·연합뉴스 · 회복궤적: KB·한국경제<br>
+    분석 자료일 뿐 투자 자문이 아님 · 최종 판단은 투자자 본인 책임
+  </div>
+
+</div>
+</body>
+</html>
