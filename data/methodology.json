@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "version": "2026-07-18.v1",
+  "title": "규칙 기반 조정 막바지 추정",
+  "probability_note": "통계적으로 보정된 예측확률이 아니라 공개 규칙의 증거점수를 5~95% 범위로 변환한 추적지표입니다.",
+  "scenario_note": "세 경로의 비중은 단기 전개를 따로 나눈 조건부 추정이며, 막바지/진행 중 확률과 합산하거나 동일시하지 않습니다.",
+  "formula": "near_end_probability = clamp(5, 95, 50 + 0.45 × evidence_score)",
+  "factors": [
+    {
+      "key": "price_structure",
+      "label": "가격 구조",
+      "weight": 20
+    },
+    {
+      "key": "daily_reversal",
+      "label": "단기 반전",
+      "weight": 15
+    },
+    {
+      "key": "weekly_momentum",
+      "label": "주봉 RSI·MACD",
+      "weight": 15
+    },
+    {
+      "key": "foreign_flow",
+      "label": "외국인 현물 수급",
+      "weight": 15
+    },
+    {
+      "key": "fx",
+      "label": "원/달러",
+      "weight": 10
+    },
+    {
+      "key": "semiconductor",
+      "label": "한·미 반도체",
+      "weight": 10
+    },
+    {
+      "key": "macro_risk",
+      "label": "VIX·달러·미10년",
+      "weight": 10
+    },
+    {
+      "key": "wave",
+      "label": "수동 ABC 앵커",
+      "weight": 5
+    }
+  ],
+  "limitations": [
+    "EWY는 코스피 자체가 아니라 한국 주식과 USD/KRW를 함께 반영합니다.",
+    "엘리엇 파동 앵커는 주관적이므로 전체 점수의 5%만 반영합니다.",
+    "한국과 미국의 휴장일이 다르므로 시장별 기준일을 따로 표시합니다.",
+    "수급·가격 공급자의 지연 또는 정정 가능성이 있어 최신 성공일과 신뢰도를 함께 봐야 합니다."
+  ],
+  "levels": {
+    "deep_support": 135.48,
+    "abc_equal": 145.81,
+    "invalidation": 153.0,
+    "primary_support": 155.58,
+    "recovery_low": 169.0,
+    "recovery_high": 172.0,
+    "trend_confirm": 177.5,
+    "strong_confirm": 184.2,
+    "wave_b": 192.25
+  }
+}
