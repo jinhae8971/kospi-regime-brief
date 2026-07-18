@@ -1,26 +1,30 @@
 {
   "schema_version": 1,
   "methodology_version": "2026-07-18.v1",
-  "generated_at": "2026-07-18T09:31:08+09:00",
+  "generated_at": "2026-07-18T09:52:12+09:00",
   "market_key": "US-2026-07-17_KR-2026-07-16",
   "market_dates": {
     "us": "2026-07-17",
     "kr": "2026-07-16",
     "flow": "2026-07-16",
     "fx": "2026-07-17",
-    "macro": "2026-07-16",
+    "macro": null,
     "soxx": "2026-07-17",
     "samsung": "2026-07-16",
     "hynix": "2026-07-16",
-    "dollar": "2026-07-10",
-    "us10y": "2026-07-16"
+    "dollar": null,
+    "us10y": null
   },
   "status": {
-    "code": "OK",
-    "coverage_pct": 100,
+    "code": "DEGRADED",
+    "coverage_pct": 90,
     "confidence": "높음",
-    "message": "모든 핵심 데이터 정상",
-    "errors": [],
+    "message": "일부 데이터 지연 또는 누락 — 신뢰도와 기준일 확인",
+    "errors": [
+      "FRED VIXCLS: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=VIXCLS (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))",
+      "FRED DGS10: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=DGS10 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))",
+      "FRED DTWEXBGS: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=DTWEXBGS (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
+    ],
     "freshness": [
       {
         "market": "us",
@@ -47,12 +51,6 @@
         "stale": false
       },
       {
-        "market": "macro",
-        "as_of": "2026-07-16",
-        "age_days": 2,
-        "stale": false
-      },
-      {
         "market": "soxx",
         "as_of": "2026-07-17",
         "age_days": 1,
@@ -66,18 +64,6 @@
       },
       {
         "market": "hynix",
-        "as_of": "2026-07-16",
-        "age_days": 2,
-        "stale": false
-      },
-      {
-        "market": "dollar",
-        "as_of": "2026-07-10",
-        "age_days": 8,
-        "stale": false
-      },
-      {
-        "market": "us10y",
         "as_of": "2026-07-16",
         "age_days": 2,
         "stale": false
@@ -198,34 +184,9 @@
       "volume": 9388768,
       "volume_ratio_20d": 1.388
     },
-    "VIX": {
-      "symbol": "VIX",
-      "date": "2026-07-16",
-      "close": 16.73,
-      "change_1d_pct": 6.765,
-      "change_5d_pct": 5.619,
-      "ma20": 16.883,
-      "ma20_slope": -0.202
-    },
-    "US10Y": {
-      "symbol": "US10Y",
-      "date": "2026-07-16",
-      "close": 4.57,
-      "change_1d_pct": 0.44,
-      "change_5d_pct": 0.661,
-      "ma20": 4.4975,
-      "ma20_slope": 0.025,
-      "change_5d_bp": 3.0
-    },
-    "DOLLAR": {
-      "symbol": "Broad USD",
-      "date": "2026-07-10",
-      "close": 120.5046,
-      "change_1d_pct": -0.206,
-      "change_5d_pct": -0.154,
-      "ma20": 120.5343,
-      "ma20_slope": 0.2342
-    }
+    "VIX": null,
+    "US10Y": null,
+    "DOLLAR": null
   },
   "flows": {
     "summary": {
@@ -542,9 +503,9 @@
       "label": "글로벌 위험",
       "points": 0,
       "max_points": 10,
-      "available": true,
-      "coverage_points": 10,
-      "reason": "VIX 16.7 (+5.6%/5D) · 달러 5일 -0.2% · 미10년 4.57% (+3bp/5D)"
+      "available": false,
+      "coverage_points": 0,
+      "reason": "매크로 데이터 누락"
     },
     {
       "key": "wave",
@@ -569,7 +530,7 @@
     ]
   },
   "change_reasons": [
-    "초기 기준선 생성"
+    "핵심 점수 변화 없음"
   ],
   "series": {
     "EWY": [
@@ -3121,24 +3082,6 @@
       "name": "Naver domestic equities",
       "url": "https://m.stock.naver.com/domestic/stock/005930/total",
       "as_of": "2026-07-16",
-      "status": "ok"
-    },
-    {
-      "name": "FRED VIXCLS",
-      "url": "https://fred.stlouisfed.org/series/VIXCLS",
-      "as_of": "2026-07-16",
-      "status": "ok"
-    },
-    {
-      "name": "FRED DGS10",
-      "url": "https://fred.stlouisfed.org/series/DGS10",
-      "as_of": "2026-07-16",
-      "status": "ok"
-    },
-    {
-      "name": "FRED DTWEXBGS",
-      "url": "https://fred.stlouisfed.org/series/DTWEXBGS",
-      "as_of": "2026-07-10",
       "status": "ok"
     },
     {
