@@ -4,3 +4,7 @@ __pycache__/
 .env
 *.log
 *.ps1
+.venv/
+.deps/
+.pytest_cache/
+_site/

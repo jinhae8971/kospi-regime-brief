@@ -1,4 +1,4 @@
 {
   "telegram_token": "PUT_YOUR_BOT_TOKEN_HERE",
-  "telegram_chat_id": "954137156"
+  "telegram_chat_id": "PUT_YOUR_CHAT_ID_HERE"
 }

@@ -1,44 +1,319 @@
-name: Daily Regime Brief
+name: EWY correction monitor
 
 on:
   schedule:
-    # 06:00 KST on weekdays. KST = UTC+9, so 21:00 UTC the prior day.
-    # UTC Sun(0)-Thu(4) -> KST Mon-Fri. Saturday/Sunday KST excluded.
-    - cron: "0 21 * * 0-4"
-  workflow_dispatch:        # manual test trigger
+    # 07:17 KST Monday-Friday. GitHub cron is UTC, so the run starts on
+    # 22:17 UTC Sunday-Thursday. The non-round minute also reduces queue delay.
+    - cron: "17 22 * * 0-4"
+  workflow_dispatch:
+    inputs:
+      notify:
+        description: "Send Telegram when this run discovers a new market date"
+        required: true
+        default: false
+        type: boolean
+      force_send:
+        description: "With notify enabled, resend Telegram even for the same market date"
+        required: true
+        default: false
+        type: boolean
+  push:
+    branches:
+      - main
+    # Generated data commits are deliberately excluded so the monitor cannot
+    # trigger itself. Code/dashboard changes still get a full offline test run.
+    paths:
+      - ".github/workflows/daily-brief.yml"
+      - "monitor.py"
+      - "daily_brief.py"
+      - "index.html"
+      - "requirements*.txt"
+      - "tests/**"
+      - "README.md"
+
+permissions: {}
 
 concurrency:
-  group: regime-brief
+  group: ewy-correction-monitor-main
+  # A market-data or successful-notification commit must not be interrupted.
+  # Duplicate scheduled runs remain safe because notification is keyed by the
+  # US/Korean market-date pair.
   cancel-in-progress: false
 
 jobs:
-  run:
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
+  test:
+    name: Offline contract tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Check out requested revision
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-          cache: "pip"
-      - run: pip install -r requirements.txt
-      - name: Send daily brief
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            requirements-dev.txt
+
+      - name: Install runtime and test dependencies
+        run: python -m pip install --disable-pip-version-check -r requirements.txt -r requirements-dev.txt
+
+      - name: Run network-free tests
+        run: python -m pytest -q
+
+  update_data:
+    name: Collect and persist market data
+    needs: test
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      pages: write
+    outputs:
+      market_key: ${{ steps.monitor.outputs.market_key }}
+      notification_needed: ${{ steps.monitor.outputs.notification_needed }}
+      status_code: ${{ steps.monitor.outputs.status_code }}
+      data_changed: ${{ steps.commit.outputs.data_changed }}
+    steps:
+      - name: Check out current main branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Install runtime dependencies
+        run: python -m pip install --disable-pip-version-check -r requirements.txt
+
+      - name: Refresh latest snapshot and history
+        id: monitor
+        run: python monitor.py --dry-run --github-output "$GITHUB_OUTPUT"
+
+      - name: Validate generated JSON contracts
+        run: python -m pip install --disable-pip-version-check -r requirements-dev.txt && python -m pytest -q tests/test_monitor.py
+
+      - name: Commit only generated JSON and push safely
+        id: commit
+        shell: bash
         env:
-          TELEGRAM_TOKEN:   ${{ secrets.TELEGRAM_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          TZ: "Asia/Seoul"
-        run: python daily_brief.py
-      - name: Notify on failure
-        if: failure()
-        env:
-          TELEGRAM_TOKEN:   ${{ secrets.TELEGRAM_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          MARKET_KEY: ${{ steps.monitor.outputs.market_key }}
         run: |
-          python - <<'EOF'
-          import os, requests
-          requests.post(
-              f"https://api.telegram.org/bot{os.environ['TELEGRAM_TOKEN']}/sendMessage",
-              json={"chat_id": os.environ["TELEGRAM_CHAT_ID"],
-                    "text": "❌ Daily Regime Brief 실행 실패 — Actions 로그 확인"},
-              timeout=10)
-          EOF
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -- data/*.json
+          if git diff --cached --quiet; then
+            echo "data_changed=false" >> "$GITHUB_OUTPUT"
+            echo "No generated JSON changes to commit."
+            exit 0
+          fi
+
+          unexpected="$(git diff --cached --name-only | awk '!/^data\/[^/]+\.json$/')"
+          if [[ -n "$unexpected" ]]; then
+            echo "::error::Refusing to commit paths outside data/*.json: $unexpected"
+            exit 1
+          fi
+
+          git commit -m "chore(data): update ${MARKET_KEY} [skip ci]"
+          echo "data_changed=true" >> "$GITHUB_OUTPUT"
+
+          for attempt in 1 2 3; do
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+            if [[ "$attempt" -eq 3 ]]; then
+              echo "::error::Unable to push generated data after 3 attempts."
+              exit 1
+            fi
+
+            echo "Push raced with main; fetching and rebasing (attempt $((attempt + 1))/3)."
+            git fetch origin main
+            if ! git rebase origin/main; then
+              git rebase --abort || true
+              echo "::error::Generated JSON conflicted with a newer main commit; refusing to overwrite it."
+              exit 1
+            fi
+          done
+
+      # A push made with GITHUB_TOKEN does not automatically start a legacy
+      # branch-source Pages build, so request that build explicitly.
+      - name: Request branch-source Pages build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          curl --fail-with-body --silent --show-error --retry 3 --retry-all-errors \
+            --request POST \
+            --header "Accept: application/vnd.github+json" \
+            --header "Authorization: Bearer ${GH_TOKEN}" \
+            --header "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/pages/builds" \
+            > /dev/null
+
+  telegram:
+    name: Verify Pages and send Telegram
+    needs:
+      - test
+      - update_data
+    if: >-
+      always() &&
+      needs.test.result == 'success' &&
+      (needs.update_data.result == 'success' || needs.update_data.result == 'skipped') &&
+      (
+        (github.event_name == 'schedule' && needs.update_data.outputs.notification_needed == 'true') ||
+        (
+          github.event_name == 'workflow_dispatch' &&
+          inputs.notify == true &&
+          (needs.update_data.outputs.notification_needed == 'true' || inputs.force_send == true)
+        ) ||
+        (github.event_name == 'push' && contains(github.event.head_commit.message, '[notify]'))
+      )
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    permissions:
+      contents: write
+    steps:
+      - name: Check out published snapshot
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Install runtime dependencies
+        run: python -m pip install --disable-pip-version-check -r requirements.txt
+
+      - name: Resolve published market key
+        id: snapshot
+        shell: bash
+        run: |
+          key="$(python -c 'import json; print(json.load(open("data/latest.json", encoding="utf-8"))["market_key"])')"
+          stamp="$(python -c 'import json; print(json.load(open("data/latest.json", encoding="utf-8"))["generated_at"])')"
+          echo "market_key=$key" >> "$GITHUB_OUTPUT"
+          echo "generated_at=$stamp" >> "$GITHUB_OUTPUT"
+
+      - name: Wait until Pages serves the same snapshot
+        run: >-
+          python monitor.py
+          --wait-pages "${{ steps.snapshot.outputs.market_key }}"
+          --generated-at "${{ steps.snapshot.outputs.generated_at }}"
+          --timeout 300
+
+      - name: Send concise Telegram brief
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python monitor.py --send-existing
+
+      - name: Persist successful notification key
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -- data/notification.json
+          if git diff --cached --quiet; then
+            echo "Notification state is already current."
+            exit 0
+          fi
+
+          unexpected="$(git diff --cached --name-only | awk '$0 != "data/notification.json"')"
+          if [[ -n "$unexpected" ]]; then
+            echo "::error::Refusing to commit paths other than data/notification.json: $unexpected"
+            exit 1
+          fi
+
+          git commit -m "chore(data): record Telegram notification [skip ci]"
+          for attempt in 1 2 3; do
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+            if [[ "$attempt" -eq 3 ]]; then
+              echo "::error::Unable to persist notification state after 3 attempts."
+              exit 1
+            fi
+
+            echo "Push raced with main; fetching and rebasing (attempt $((attempt + 1))/3)."
+            git fetch origin main
+            if ! git rebase origin/main; then
+              git rebase --abort || true
+              echo "::error::Notification state conflicted with main; refusing to overwrite it."
+              exit 1
+            fi
+          done
+
+  failure_alert:
+    name: Telegram failure alert
+    needs:
+      - test
+      - update_data
+      - telegram
+    if: >-
+      always() &&
+      (
+        needs.test.result == 'failure' ||
+        needs.update_data.result == 'failure' ||
+        needs.telegram.result == 'failure'
+      )
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    permissions: {}
+    steps:
+      - name: Notify only when Telegram secrets exist
+        continue-on-error: true
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import urllib.request
+
+          token = os.environ.get("TELEGRAM_TOKEN", "")
+          chat_id = os.environ.get("TELEGRAM_CHAT_ID", "")
+          if not token or not chat_id:
+              print("Telegram secrets are not configured; failure alert skipped.")
+              raise SystemExit(0)
+
+          payload = json.dumps(
+              {
+                  "chat_id": chat_id,
+                  "text": "❌ EWY 조정 모니터 실행 실패\nActions 로그: " + os.environ["RUN_URL"],
+                  "disable_web_page_preview": True,
+              }
+          ).encode("utf-8")
+          request = urllib.request.Request(
+              f"https://api.telegram.org/bot{token}/sendMessage",
+              data=payload,
+              headers={"Content-Type": "application/json"},
+              method="POST",
+          )
+          try:
+              with urllib.request.urlopen(request, timeout=20) as response:
+                  if response.status >= 300:
+                      raise RuntimeError(f"Telegram HTTP {response.status}")
+          except Exception as exc:
+              # Avoid printing the request URL because it contains the bot token.
+              print(f"Failure alert could not be delivered: {type(exc).__name__}")
+              raise
+          PY
