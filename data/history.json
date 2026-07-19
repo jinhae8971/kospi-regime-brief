@@ -1,20 +1,20 @@
 {
   "schema_version": 1,
   "methodology_version": "2026-07-18.v1",
-  "updated_at": "2026-07-18T09:52:12+09:00",
+  "updated_at": "2026-07-20T08:18:26+09:00",
   "observations": [
     {
       "market_key": "US-2026-07-17_KR-2026-07-16",
-      "generated_at": "2026-07-18T09:52:12+09:00",
+      "generated_at": "2026-07-20T08:18:26+09:00",
       "market_dates": {
         "us": "2026-07-17",
         "kr": "2026-07-16",
         "flow": "2026-07-16",
-        "fx": "2026-07-17",
+        "fx": "2026-07-19",
         "macro": null,
         "soxx": "2026-07-17",
-        "samsung": "2026-07-16",
-        "hynix": "2026-07-16",
+        "samsung": "2026-07-20",
+        "hynix": "2026-07-20",
         "dollar": null,
         "us10y": null
       },
@@ -32,43 +32,43 @@
           {
             "market": "us",
             "as_of": "2026-07-17",
-            "age_days": 1,
+            "age_days": 3,
             "stale": false
           },
           {
             "market": "kr",
             "as_of": "2026-07-16",
-            "age_days": 2,
+            "age_days": 4,
             "stale": false
           },
           {
             "market": "flow",
             "as_of": "2026-07-16",
-            "age_days": 2,
+            "age_days": 4,
             "stale": false
           },
           {
             "market": "fx",
-            "as_of": "2026-07-17",
+            "as_of": "2026-07-19",
             "age_days": 1,
             "stale": false
           },
           {
             "market": "soxx",
             "as_of": "2026-07-17",
-            "age_days": 1,
+            "age_days": 3,
             "stale": false
           },
           {
             "market": "samsung",
-            "as_of": "2026-07-16",
-            "age_days": 2,
+            "as_of": "2026-07-20",
+            "age_days": 0,
             "stale": false
           },
           {
             "market": "hynix",
-            "as_of": "2026-07-16",
-            "age_days": 2,
+            "as_of": "2026-07-20",
+            "age_days": 0,
             "stale": false
           }
         ]
@@ -113,8 +113,8 @@
           "change_20d_pct": -20.743,
           "ma5": 168.508,
           "ma20": 187.9835,
-          "volume": 37988363,
-          "volume_ratio_20d": 1.576
+          "volume": 38339340,
+          "volume_ratio_20d": 1.59
         },
         "KOSPI": {
           "symbol": "KOSPI",
@@ -128,12 +128,12 @@
         },
         "USDKRW": {
           "symbol": "USD/KRW",
-          "date": "2026-07-17",
-          "close": 1480.1581,
-          "change_1d_pct": -0.661,
-          "change_5d_pct": -1.454,
-          "ma20": 1521.2179,
-          "ma20_slope": -8.6921
+          "date": "2026-07-19",
+          "close": 1486.1196,
+          "change_1d_pct": -0.327,
+          "change_5d_pct": -1.057,
+          "ma20": 1521.566,
+          "ma20_slope": -8.344
         },
         "SOXX": {
           "symbol": "SOXX",
@@ -144,7 +144,7 @@
           "change_20d_pct": -12.993,
           "ma5": 545.822,
           "ma20": 586.15,
-          "volume": 15576819,
+          "volume": 15576820,
           "volume_ratio_20d": 1.512
         }
       },
@@ -206,7 +206,7 @@
           "max_points": 10,
           "available": true,
           "coverage_points": 10,
-          "reason": "USD/KRW 5일 -1.45% · 현재 1,480.2원"
+          "reason": "USD/KRW 5일 -1.06% · 현재 1,486.1원"
         },
         {
           "key": "semiconductor",
@@ -215,7 +215,7 @@
           "max_points": 10,
           "available": true,
           "coverage_points": 10,
-          "reason": "SOXX 5일 -10.24% · 한국 반도체 상대강도 -5.54%p · SOXX 20일선 하단"
+          "reason": "SOXX 5일 -10.24% · 한국 반도체 상대강도 -6.55%p · SOXX 20일선 하단"
         },
         {
           "key": "macro_risk",
@@ -238,13 +238,13 @@
       ],
       "reasons": {
         "bull": [
-          "USD/KRW 5일 -1.45% · 현재 1,480.2원",
+          "USD/KRW 5일 -1.06% · 현재 1,486.1원",
           "C/A가 0.786~1.0이고 155.58 회복",
           "핵심 피보나치 지지 155.58 상단 유지"
         ],
         "bear": [
           "5일선 하단 · 5일선 하락 · 단기 저점 하락 · 일봉 MACD 약화 · 거래량 반전 확인 전",
-          "SOXX 5일 -10.24% · 한국 반도체 상대강도 -5.54%p · SOXX 20일선 하단",
+          "SOXX 5일 -10.24% · 한국 반도체 상대강도 -6.55%p · SOXX 20일선 하단",
           "주봉 RSI 하락 · 히스토그램 2주 악화"
         ]
       },
