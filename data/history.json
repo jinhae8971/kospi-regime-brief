@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "methodology_version": "2026-07-18.v1",
-  "updated_at": "2026-07-21T08:21:37+09:00",
+  "updated_at": "2026-07-22T08:18:24+09:00",
   "observations": [
     {
       "market_key": "US-2026-07-17_KR-2026-07-16",
@@ -500,6 +500,257 @@
       "change_reasons": [
         "반도체 -10→-4",
         "외국인 수급 +0→+3"
+      ]
+    },
+    {
+      "market_key": "US-2026-07-21_KR-2026-07-21",
+      "generated_at": "2026-07-22T08:18:24+09:00",
+      "market_dates": {
+        "us": "2026-07-21",
+        "kr": "2026-07-21",
+        "flow": "2026-07-21",
+        "fx": "2026-07-21",
+        "macro": null,
+        "soxx": "2026-07-21",
+        "samsung": "2026-07-22",
+        "hynix": "2026-07-22",
+        "dollar": null,
+        "us10y": null
+      },
+      "status": {
+        "code": "DEGRADED",
+        "coverage_pct": 90,
+        "confidence": "높음",
+        "message": "일부 데이터 지연 또는 누락 — 신뢰도와 기준일 확인",
+        "errors": [
+          "FRED VIXCLS: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=VIXCLS (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))",
+          "FRED DGS10: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=DGS10 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))",
+          "FRED DTWEXBGS: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=DTWEXBGS (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
+        ],
+        "freshness": [
+          {
+            "market": "us",
+            "as_of": "2026-07-21",
+            "age_days": 1,
+            "stale": false
+          },
+          {
+            "market": "kr",
+            "as_of": "2026-07-21",
+            "age_days": 1,
+            "stale": false
+          },
+          {
+            "market": "flow",
+            "as_of": "2026-07-21",
+            "age_days": 1,
+            "stale": false
+          },
+          {
+            "market": "fx",
+            "as_of": "2026-07-21",
+            "age_days": 1,
+            "stale": false
+          },
+          {
+            "market": "soxx",
+            "as_of": "2026-07-21",
+            "age_days": 1,
+            "stale": false
+          },
+          {
+            "market": "samsung",
+            "as_of": "2026-07-22",
+            "age_days": 0,
+            "stale": false
+          },
+          {
+            "market": "hynix",
+            "as_of": "2026-07-22",
+            "age_days": 0,
+            "stale": false
+          }
+        ]
+      },
+      "verdict": {
+        "label": "재시험·방향 확인 구간",
+        "score": 0,
+        "near_end_probability": 50,
+        "ongoing_probability": 50,
+        "change_pp": 3,
+        "summary": "1차 회복 구간에 진입했지만 higher low 확인이 필요합니다.",
+        "confidence": "높음",
+        "probability_type": "rules_based_estimate"
+      },
+      "scenarios": [
+        {
+          "key": "direct",
+          "label": "저점 형성·직접 반등",
+          "probability": 35,
+          "condition": "169~177.5 회복 후 higher low"
+        },
+        {
+          "key": "retest",
+          "label": "154~156 재시험·바닥 다지기",
+          "probability": 50,
+          "condition": "지지 재시험 시 거래량 감소"
+        },
+        {
+          "key": "deep",
+          "label": "145~135 심화 조정",
+          "probability": 15,
+          "condition": "주봉 153 하회 시 위험 확대"
+        }
+      ],
+      "metrics": {
+        "EWY": {
+          "symbol": "EWY",
+          "date": "2026-07-21",
+          "close": 172.91,
+          "change_1d_pct": 6.171,
+          "change_5d_pct": -2.3,
+          "change_20d_pct": -21.053,
+          "ma5": 166.662,
+          "ma20": 182.861,
+          "volume": 21007613,
+          "volume_ratio_20d": 0.852
+        },
+        "KOSPI": {
+          "symbol": "KOSPI",
+          "date": "2026-07-21",
+          "close": 6747.95,
+          "change_1d_pct": 3.555,
+          "change_5d_pct": -0.866,
+          "change_20d_pct": -25.965,
+          "ma5": 6845.212,
+          "ma20": 7684.1305
+        },
+        "USDKRW": {
+          "symbol": "USD/KRW",
+          "date": "2026-07-21",
+          "close": 1482.5,
+          "change_1d_pct": 0.271,
+          "change_5d_pct": -1.134,
+          "ma20": 1518.385,
+          "ma20_slope": -10.725
+        },
+        "SOXX": {
+          "symbol": "SOXX",
+          "date": "2026-07-21",
+          "close": 552.69,
+          "change_1d_pct": 5.447,
+          "change_5d_pct": -2.682,
+          "change_20d_pct": -15.621,
+          "ma5": 536.882,
+          "ma20": 575.2685,
+          "volume": 10067533,
+          "volume_ratio_20d": 0.981
+        }
+      },
+      "flows": {
+        "date": "2026-07-21",
+        "foreign_1d": 0.2952,
+        "institution_1d": 1.3744,
+        "personal_1d": -1.6421,
+        "foreign_3d": -0.5515,
+        "foreign_5d": 2.7081,
+        "foreign_10d": -1.7244,
+        "foreign_streak": 2
+      },
+      "signal_summary": {
+        "met": 2,
+        "total": 6
+      },
+      "factors": [
+        {
+          "key": "price_structure",
+          "label": "가격 구조",
+          "points": 7,
+          "max_points": 20,
+          "available": true,
+          "coverage_points": 20,
+          "reason": "1차 회복 구간 169~172 진입"
+        },
+        {
+          "key": "daily_reversal",
+          "label": "단기 반전",
+          "points": 0,
+          "max_points": 15,
+          "available": true,
+          "coverage_points": 15,
+          "reason": "5일선 상단 · 5일선 하락 · 단기 저점 하락 · 일봉 MACD 개선 · 거래량 반전 확인 전"
+        },
+        {
+          "key": "weekly_momentum",
+          "label": "주봉 모멘텀",
+          "points": -8,
+          "max_points": 15,
+          "available": true,
+          "coverage_points": 15,
+          "reason": "주봉 RSI 하락 · 히스토그램 2주 악화 (진행 주 제외)"
+        },
+        {
+          "key": "foreign_flow",
+          "label": "외국인 수급",
+          "points": -6,
+          "max_points": 15,
+          "available": true,
+          "coverage_points": 15,
+          "reason": "외국인 3일 -0.55조 · 10일 -1.72조 · 연속 +2일"
+        },
+        {
+          "key": "fx",
+          "label": "원/달러",
+          "points": 7,
+          "max_points": 10,
+          "available": true,
+          "coverage_points": 10,
+          "reason": "USD/KRW 5일 -1.13% · 현재 1,482.5원"
+        },
+        {
+          "key": "semiconductor",
+          "label": "반도체",
+          "points": -5,
+          "max_points": 10,
+          "available": true,
+          "coverage_points": 10,
+          "reason": "SOXX 5일 -2.68% · 한국 반도체 상대강도 -1.91%p · SOXX 20일선 하단"
+        },
+        {
+          "key": "macro_risk",
+          "label": "글로벌 위험",
+          "points": 0,
+          "max_points": 10,
+          "available": false,
+          "coverage_points": 0,
+          "reason": "매크로 데이터 누락"
+        },
+        {
+          "key": "wave",
+          "label": "파동 완성도",
+          "points": 5,
+          "max_points": 5,
+          "available": true,
+          "coverage_points": 5,
+          "reason": "C/A가 0.786~1.0이고 155.58 회복"
+        }
+      ],
+      "reasons": {
+        "bull": [
+          "1차 회복 구간 169~172 진입",
+          "USD/KRW 5일 -1.13% · 현재 1,482.5원",
+          "C/A가 0.786~1.0이고 155.58 회복"
+        ],
+        "bear": [
+          "주봉 RSI 하락 · 히스토그램 2주 악화 (진행 주 제외)",
+          "외국인 3일 -0.55조 · 10일 -1.72조 · 연속 +2일",
+          "SOXX 5일 -2.68% · 한국 반도체 상대강도 -1.91%p · SOXX 20일선 하단"
+        ]
+      },
+      "change_reasons": [
+        "단기 반전 -12→+0",
+        "외국인 수급 +3→-6",
+        "가격 구조 +3→+7"
       ]
     }
   ]
