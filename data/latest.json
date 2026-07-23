@@ -1,29 +1,33 @@
 {
   "schema_version": 1,
   "methodology_version": "2026-07-18.v1",
-  "generated_at": "2026-07-24T08:18:09+09:00",
+  "generated_at": "2026-07-24T08:42:05+09:00",
   "market_key": "US-2026-07-23_KR-2026-07-23",
   "market_dates": {
     "us": "2026-07-23",
     "kr": "2026-07-23",
     "flow": "2026-07-23",
-    "fx": "2026-07-23",
-    "macro": null,
+    "fx": "2026-07-24",
+    "macro": "2026-07-23",
     "soxx": "2026-07-23",
     "samsung": "2026-07-24",
     "hynix": "2026-07-24",
-    "dollar": null,
-    "us10y": null
+    "dollar": "2026-07-23",
+    "us10y": "2026-07-23"
   },
   "status": {
-    "code": "DEGRADED",
-    "coverage_pct": 90,
+    "code": "OK",
+    "coverage_pct": 100,
     "confidence": "높음",
-    "message": "일부 데이터 지연 또는 누락 — 신뢰도와 기준일 확인",
-    "errors": [
-      "FRED VIXCLS: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=VIXCLS (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))",
-      "FRED DGS10: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=DGS10 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))",
-      "FRED DTWEXBGS: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=DTWEXBGS (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
+    "message": "모든 핵심 데이터 정상",
+    "errors": [],
+    "warnings": [
+      "FRED VIXCLS: proxy 계층으로 대체 (api=FRED_API_KEY is not set; graph=HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=VIXCLS)",
+      "FRED VIXCLS: 대체 소스 ^VIX (FRED VIXCLS 대체) 사용",
+      "FRED DGS10: proxy 계층으로 대체 (api=FRED_API_KEY is not set; graph=HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=DGS10)",
+      "FRED DGS10: 대체 소스 ^TNX (FRED DGS10 대체) 사용",
+      "FRED DTWEXBGS: proxy 계층으로 대체 (api=FRED_API_KEY is not set; graph=HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=DTWEXB)",
+      "FRED DTWEXBGS: 대체 소스 DX-Y.NYB (FRED DTWEXBGS 대체) 사용 — 근사치"
     ],
     "freshness": [
       {
@@ -46,6 +50,12 @@
       },
       {
         "market": "fx",
+        "as_of": "2026-07-24",
+        "age_days": 0,
+        "stale": false
+      },
+      {
+        "market": "macro",
         "as_of": "2026-07-23",
         "age_days": 1,
         "stale": false
@@ -67,6 +77,18 @@
         "as_of": "2026-07-24",
         "age_days": 0,
         "stale": false
+      },
+      {
+        "market": "dollar",
+        "as_of": "2026-07-23",
+        "age_days": 1,
+        "stale": false
+      },
+      {
+        "market": "us10y",
+        "as_of": "2026-07-23",
+        "age_days": 1,
+        "stale": false
       }
     ]
   },
@@ -75,7 +97,7 @@
     "score": 36,
     "near_end_probability": 66,
     "ongoing_probability": 34,
-    "change_pp": 7,
+    "change_pp": 0,
     "summary": "1차 회복 구간에 진입했지만 higher low 확인이 필요합니다.",
     "confidence": "높음",
     "probability_type": "rules_based_estimate"
@@ -111,7 +133,7 @@
       "change_20d_pct": -11.832,
       "ma5": 168.53,
       "ma20": 180.605,
-      "volume": 18539687,
+      "volume": 18554531,
       "volume_ratio_20d": 0.806
     },
     "EWY_WEEKLY": {
@@ -141,12 +163,12 @@
     },
     "USDKRW": {
       "symbol": "USD/KRW",
-      "date": "2026-07-23",
+      "date": "2026-07-24",
       "close": 1476.5,
-      "change_1d_pct": -0.169,
-      "change_5d_pct": -0.806,
-      "ma20": 1512.31,
-      "ma20_slope": -13.95
+      "change_1d_pct": 0.0,
+      "change_5d_pct": -0.973,
+      "ma20": 1508.885,
+      "ma20_slope": -15.025
     },
     "SOXX": {
       "symbol": "SOXX",
@@ -157,7 +179,7 @@
       "change_20d_pct": -8.356,
       "ma5": 541.08,
       "ma20": 570.362,
-      "volume": 6679164,
+      "volume": 6681996,
       "volume_ratio_20d": 0.681
     },
     "SAMSUNG": {
@@ -169,8 +191,8 @@
       "change_20d_pct": -24.686,
       "ma5": 260700.0,
       "ma20": 285825.0,
-      "volume": 1050354,
-      "volume_ratio_20d": 0.038
+      "volume": 1864906,
+      "volume_ratio_20d": 0.068
     },
     "HYNIX": {
       "symbol": "SK hynix",
@@ -181,12 +203,37 @@
       "change_20d_pct": -34.213,
       "ma5": 1853600.0,
       "ma20": 2152950.0,
-      "volume": 232505,
-      "volume_ratio_20d": 0.04
+      "volume": 393680,
+      "volume_ratio_20d": 0.068
     },
-    "VIX": null,
-    "US10Y": null,
-    "DOLLAR": null
+    "VIX": {
+      "symbol": "VIX",
+      "date": "2026-07-23",
+      "close": 18.7,
+      "change_1d_pct": 12.38,
+      "change_5d_pct": 11.775,
+      "ma20": 16.974,
+      "ma20_slope": -0.0215
+    },
+    "US10Y": {
+      "symbol": "US10Y",
+      "date": "2026-07-23",
+      "close": 4.703,
+      "change_1d_pct": 0.988,
+      "change_5d_pct": 2.933,
+      "ma20": 4.5318,
+      "ma20_slope": 0.0405,
+      "change_5d_bp": 13.4
+    },
+    "DOLLAR": {
+      "symbol": "Broad USD",
+      "date": "2026-07-23",
+      "close": 101.437,
+      "change_1d_pct": 0.294,
+      "change_5d_pct": 0.702,
+      "ma20": 101.0619,
+      "ma20_slope": 0.0258
+    }
   },
   "flows": {
     "summary": {
@@ -487,7 +534,7 @@
       "max_points": 10,
       "available": true,
       "coverage_points": 10,
-      "reason": "USD/KRW 5일 -0.81% · 현재 1,476.5원"
+      "reason": "USD/KRW 5일 -0.97% · 현재 1,476.5원"
     },
     {
       "key": "semiconductor",
@@ -503,9 +550,9 @@
       "label": "글로벌 위험",
       "points": 0,
       "max_points": 10,
-      "available": false,
-      "coverage_points": 0,
-      "reason": "매크로 데이터 누락"
+      "available": true,
+      "coverage_points": 10,
+      "reason": "VIX 18.7 (+11.8%/5D) · 달러 5일 +0.7% · 미10년 4.70% (+13bp/5D)"
     },
     {
       "key": "wave",
@@ -521,15 +568,14 @@
     "bull": [
       "외국인 3일 +5.05조 · 10일 +5.61조 · 연속 +4일",
       "1차 회복 구간 169~172 진입",
-      "USD/KRW 5일 -0.81% · 현재 1,476.5원"
+      "USD/KRW 5일 -0.97% · 현재 1,476.5원"
     ],
     "bear": [
       "주봉 RSI 하락 · 히스토그램 2주 악화 (진행 주 제외)"
     ]
   },
   "change_reasons": [
-    "반도체 -5→+4",
-    "단기 반전 +0→+6"
+    "핵심 점수 변화 없음"
   ],
   "series": {
     "EWY": [
@@ -1831,7 +1877,7 @@
       {
         "date": "2026-07-23",
         "close": 173.92,
-        "volume": 18539687.0
+        "volume": 18554531.0
       }
     ],
     "KOSPI": [
@@ -2800,10 +2846,6 @@
     ],
     "USDKRW": [
       {
-        "date": "2026-04-24",
-        "close": 1478.0
-      },
-      {
         "date": "2026-04-27",
         "close": 1475.0
       },
@@ -3038,6 +3080,10 @@
       {
         "date": "2026-07-23",
         "close": 1476.5
+      },
+      {
+        "date": "2026-07-24",
+        "close": 1476.5
       }
     ]
   },
@@ -3074,9 +3120,33 @@
       "status": "ok"
     },
     {
+      "name": "^VIX (FRED VIXCLS 대체)",
+      "url": "https://finance.yahoo.com/quote/^VIX",
+      "as_of": "2026-07-23",
+      "status": "proxy",
+      "note": "CBOE VIX 종가",
+      "tier": "proxy"
+    },
+    {
+      "name": "^TNX (FRED DGS10 대체)",
+      "url": "https://finance.yahoo.com/quote/^TNX",
+      "as_of": "2026-07-23",
+      "status": "proxy",
+      "note": "10년물 금리 지수",
+      "tier": "proxy"
+    },
+    {
+      "name": "DX-Y.NYB (FRED DTWEXBGS 대체)",
+      "url": "https://finance.yahoo.com/quote/DX-Y.NYB",
+      "as_of": "2026-07-23",
+      "status": "proxy_approx",
+      "note": "DXY — 광의 무역가중 달러와 바스켓 구성이 다름",
+      "tier": "proxy"
+    },
+    {
       "name": "Naver USD/KRW reference rate",
       "url": "https://finance.naver.com/marketindex/",
-      "as_of": "2026-07-23",
+      "as_of": "2026-07-24",
       "status": "ok"
     },
     {
