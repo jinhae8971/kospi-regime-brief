@@ -436,11 +436,88 @@ def fetch_naver_flows(
     }
 
 
+FRED_TIMEOUT = 15
+
+# FRED graph 엔드포인트가 러너 IP에서 차단될 때 쓰는 대체 심볼.
+# scale: FRED 시계열과 단위를 맞추기 위한 배수.
+# approx=True 는 바스켓이 달라 근사치임을 뜻한다(대시보드에 명시됨).
+FRED_PROXY = {
+    "VIXCLS": {"symbol": "^VIX", "scale": 1.0, "approx": False, "note": "CBOE VIX 종가"},
+    "DGS10": {"symbol": "^TNX", "scale": 1.0, "approx": False, "note": "10년물 금리 지수"},
+    "DTWEXBGS": {"symbol": "DX-Y.NYB", "scale": 1.0, "approx": True,
+                 "note": "DXY — 광의 무역가중 달러와 바스켓 구성이 다름"},
+    "DEXKOUS": {"symbol": "KRW=X", "scale": 1.0, "approx": False, "note": "USD/KRW 현물"},
+}
+
+
+def _trim_series(frame: pd.DataFrame, series_id: str, days: int) -> pd.Series:
+    cutoff = pd.Timestamp(now_kst().date() - timedelta(days=days))
+    frame = frame.dropna().loc[lambda x: x["date"] >= cutoff].set_index("date")
+    if len(frame) < 5:
+        raise DataError(f"FRED {series_id}: usable history is too short")
+    return frame["value"].sort_index()
+
+
+def fetch_fred_api(session: requests.Session, series_id: str, days: int = 760):
+    """1순위 — FRED 공식 API. FRED_API_KEY 가 있을 때만 시도한다."""
+    api_key = os.environ.get("FRED_API_KEY", "").strip()
+    if not api_key:
+        raise DataError("FRED_API_KEY is not set")
+    start = (now_kst().date() - timedelta(days=days)).isoformat()
+    response = session.get(
+        "https://api.stlouisfed.org/fred/series/observations",
+        params={"series_id": series_id, "api_key": api_key, "file_type": "json",
+                "observation_start": start},
+        timeout=FRED_TIMEOUT,
+    )
+    response.raise_for_status()
+    rows = response.json().get("observations") or []
+    frame = pd.DataFrame([{"date": r.get("date"), "value": r.get("value")} for r in rows])
+    if frame.empty:
+        raise DataError(f"FRED {series_id}: API returned no observations")
+    frame["date"] = pd.to_datetime(frame["date"], errors="coerce")
+    frame["value"] = pd.to_numeric(frame["value"], errors="coerce")
+    series = _trim_series(frame, series_id, days)
+    return series, {
+        "name": f"FRED {series_id} (API)",
+        "url": f"https://fred.stlouisfed.org/series/{series_id}",
+        "as_of": series.index[-1].date().isoformat(),
+        "status": "ok",
+    }
+
+
+def fetch_fred_proxy(series_id: str, days: int = 760):
+    """3순위 — FRED 도달 실패 시 시장 데이터로 대체한다."""
+    proxy = FRED_PROXY.get(series_id)
+    if not proxy:
+        raise DataError(f"FRED {series_id}: no proxy defined")
+    import yfinance as yf
+
+    history = yf.Ticker(proxy["symbol"]).history(period="2y")
+    if history.empty or "Close" not in history:
+        raise DataError(f"{proxy['symbol']}: empty history")
+    closes = history["Close"].dropna() * proxy["scale"]
+    if closes.empty:
+        raise DataError(f"{proxy['symbol']}: no usable closes")
+    frame = pd.DataFrame({
+        "date": pd.to_datetime(closes.index.date),
+        "value": pd.to_numeric(closes.values, errors="coerce"),
+    })
+    series = _trim_series(frame, series_id, days)
+    return series, {
+        "name": f"{proxy['symbol']} (FRED {series_id} 대체)",
+        "url": f"https://finance.yahoo.com/quote/{proxy['symbol']}",
+        "as_of": series.index[-1].date().isoformat(),
+        "status": "proxy_approx" if proxy["approx"] else "proxy",
+        "note": proxy["note"],
+    }
+
+
 def fetch_fred(session: requests.Session, series_id: str, days: int = 760) -> tuple[pd.Series, dict[str, Any]]:
     response = session.get(
         "https://fred.stlouisfed.org/graph/fredgraph.csv",
         params={"id": series_id},
-        timeout=30,
+        timeout=FRED_TIMEOUT,
     )
     response.raise_for_status()
     frame = pd.read_csv(io.StringIO(response.text))
@@ -458,6 +535,44 @@ def fetch_fred(session: requests.Session, series_id: str, days: int = 760) -> tu
         "as_of": series.index[-1].date().isoformat(),
         "status": "ok",
     }
+
+
+def fetch_macro_series(
+    session: requests.Session,
+    series_id: str,
+    warnings: list[str],
+    days: int = 760,
+) -> tuple[pd.Series, dict[str, Any]]:
+    """공식 API → graph CSV → 시장 프록시 순으로 시도한다.
+
+    한 계층이라도 성공하면 데이터는 확보된 것이므로 errors 가 아니라
+    warnings 에 기록한다. 결측(전 계층 실패)일 때만 호출부가 errors 로 올린다.
+    """
+    attempts: list[str] = []
+
+    for label, loader in (
+        ("api", lambda: fetch_fred_api(session, series_id, days)),
+        ("graph", lambda: fetch_fred(session, series_id, days)),
+        ("proxy", lambda: fetch_fred_proxy(series_id, days)),
+    ):
+        try:
+            series, source = loader()
+        except Exception as exc:                       # noqa: BLE001
+            reason = str(exc).split("(Caused by")[0].strip()[:120]
+            attempts.append(f"{label}={reason}")
+            continue
+
+        source["tier"] = label
+        if label != "api" and attempts:
+            warnings.append(f"FRED {series_id}: {label} 계층으로 대체 ({'; '.join(attempts)})")
+        if source.get("status", "").startswith("proxy"):
+            warnings.append(
+                f"FRED {series_id}: 대체 소스 {source['name']} 사용"
+                + (" — 근사치" if source["status"] == "proxy_approx" else "")
+            )
+        return series, source
+
+    raise DataError(f"all tiers failed ({'; '.join(attempts)})")
 
 
 def append_current_fx(session: requests.Session, series: pd.Series) -> tuple[pd.Series, dict[str, Any] | None]:
@@ -1017,6 +1132,7 @@ def build_methodology() -> dict[str, Any]:
 def collect_snapshot(previous: dict[str, Any] | None = None) -> dict[str, Any]:
     session = http_session()
     errors: list[str] = []
+    warnings: list[str] = []
     sources: list[dict[str, Any]] = []
 
     ewy_history, source = fetch_nasdaq_history(session, "EWY")
@@ -1070,7 +1186,7 @@ def collect_snapshot(previous: dict[str, Any] | None = None) -> dict[str, Any]:
     fred_data: dict[str, pd.Series] = {}
     for series_id in ("VIXCLS", "DGS10", "DTWEXBGS"):
         try:
-            fred_data[series_id], source = fetch_fred(session, series_id)
+            fred_data[series_id], source = fetch_macro_series(session, series_id, warnings)
             sources.append(source)
         except Exception as exc:
             errors.append(f"FRED {series_id}: {exc}")
@@ -1081,7 +1197,7 @@ def collect_snapshot(previous: dict[str, Any] | None = None) -> dict[str, Any]:
     except Exception as exc:
         errors.append(f"Naver USD/KRW: {exc}")
         try:
-            fx_series, source = fetch_fred(session, "DEXKOUS")
+            fx_series, source = fetch_macro_series(session, "DEXKOUS", warnings)
             sources.append(source)
         except Exception as fallback_exc:
             fx_series = pd.Series(dtype="float64")
@@ -1127,7 +1243,8 @@ def collect_snapshot(previous: dict[str, Any] | None = None) -> dict[str, Any]:
     coverage = int(round(available_weight))
     near_end = int(round(clamp(5, 95, 50 + 0.45 * score)))
     ongoing = 100 - near_end
-    confidence = "높음" if coverage >= 90 else "보통" if coverage >= 75 else "낮음"
+    confidence = ("높음" if coverage >= 90 and not errors
+                  else "보통" if coverage >= 75 else "낮음")
     label = verdict_label(near_end)
     previous_probability = ((previous or {}).get("verdict") or {}).get("near_end_probability")
     change_pp = near_end - previous_probability if isinstance(previous_probability, (int, float)) else 0
@@ -1201,6 +1318,7 @@ def collect_snapshot(previous: dict[str, Any] | None = None) -> dict[str, Any]:
             "confidence": confidence,
             "message": "모든 핵심 데이터 정상" if status_code == "OK" else "일부 데이터 지연 또는 누락 — 신뢰도와 기준일 확인",
             "errors": errors,
+            "warnings": warnings,
             "freshness": freshness,
         },
         "verdict": {
