@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "methodology_version": "2026-07-18.v1",
-  "updated_at": "2026-07-24T08:42:05+09:00",
+  "updated_at": "2026-07-24T08:46:28+09:00",
   "observations": [
     {
       "market_key": "US-2026-07-17_KR-2026-07-16",
@@ -1003,7 +1003,7 @@
     },
     {
       "market_key": "US-2026-07-23_KR-2026-07-23",
-      "generated_at": "2026-07-24T08:42:05+09:00",
+      "generated_at": "2026-07-24T08:46:28+09:00",
       "market_dates": {
         "us": "2026-07-23",
         "kr": "2026-07-23",
@@ -1133,7 +1133,7 @@
           "change_20d_pct": -11.832,
           "ma5": 168.53,
           "ma20": 180.605,
-          "volume": 18554531,
+          "volume": 18556874,
           "volume_ratio_20d": 0.806
         },
         "KOSPI": {
@@ -1164,7 +1164,7 @@
           "change_20d_pct": -8.356,
           "ma5": 541.08,
           "ma20": 570.362,
-          "volume": 6681996,
+          "volume": 6682472,
           "volume_ratio_20d": 0.681
         }
       },
