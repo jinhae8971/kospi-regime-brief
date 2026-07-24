@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "methodology_version": "2026-07-18.v1",
-  "generated_at": "2026-07-24T09:06:43+09:00",
+  "generated_at": "2026-07-24T09:15:07+09:00",
   "market_key": "US-2026-07-23_KR-2026-07-24",
   "market_dates": {
     "us": "2026-07-23",
@@ -151,21 +151,21 @@
     "KOSPI": {
       "symbol": "KOSPI",
       "date": "2026-07-24",
-      "close": 6982.68,
-      "change_1d_pct": -1.609,
-      "change_5d_pct": 2.376,
-      "change_20d_pct": -21.809,
-      "ma5": 6828.298,
-      "ma20": 7447.736
+      "close": 6906.64,
+      "change_1d_pct": -2.681,
+      "change_5d_pct": 1.261,
+      "change_20d_pct": -22.661,
+      "ma5": 6813.09,
+      "ma20": 7443.934
     },
     "USDKRW": {
       "symbol": "USD/KRW",
       "date": "2026-07-24",
-      "close": 1473.4,
-      "change_1d_pct": -0.21,
-      "change_5d_pct": -1.18,
-      "ma20": 1508.73,
-      "ma20_slope": -15.18
+      "close": 1471.9,
+      "change_1d_pct": -0.312,
+      "change_5d_pct": -1.281,
+      "ma20": 1508.655,
+      "ma20_slope": -15.255
     },
     "SOXX": {
       "symbol": "SOXX",
@@ -182,26 +182,26 @@
     "SAMSUNG": {
       "symbol": "Samsung Electronics",
       "date": "2026-07-24",
-      "close": 264500.0,
-      "change_1d_pct": -2.037,
-      "change_5d_pct": 3.725,
-      "change_20d_pct": -26.22,
-      "ma5": 259600.0,
-      "ma20": 285550.0,
-      "volume": 3331534,
-      "volume_ratio_20d": 0.121
+      "close": 261750.0,
+      "change_1d_pct": -3.056,
+      "change_5d_pct": 2.647,
+      "change_20d_pct": -26.987,
+      "ma5": 259050.0,
+      "ma20": 285412.5,
+      "volume": 4406434,
+      "volume_ratio_20d": 0.159
     },
     "HYNIX": {
       "symbol": "SK hynix",
       "date": "2026-07-24",
-      "close": 1872000.0,
-      "change_1d_pct": -2.449,
-      "change_5d_pct": 1.629,
-      "change_20d_pct": -35.824,
-      "ma5": 1844200.0,
-      "ma20": 2150600.0,
-      "volume": 700202,
-      "volume_ratio_20d": 0.12
+      "close": 1850000.0,
+      "change_1d_pct": -3.596,
+      "change_5d_pct": 0.434,
+      "change_20d_pct": -36.579,
+      "ma5": 1839800.0,
+      "ma20": 2149500.0,
+      "volume": 1024927,
+      "volume_ratio_20d": 0.175
     },
     "VIX": {
       "symbol": "VIX",
@@ -225,22 +225,22 @@
     "DOLLAR": {
       "symbol": "Broad USD",
       "date": "2026-07-23",
-      "close": 101.459,
-      "change_1d_pct": 0.315,
-      "change_5d_pct": 0.724,
-      "ma20": 101.063,
-      "ma20_slope": 0.027
+      "close": 101.446,
+      "change_1d_pct": 0.303,
+      "change_5d_pct": 0.711,
+      "ma20": 101.0623,
+      "ma20_slope": 0.0263
     }
   },
   "flows": {
     "summary": {
       "date": "2026-07-24",
-      "foreign_1d": -0.0881,
-      "institution_1d": -0.0526,
-      "personal_1d": 0.1486,
-      "foreign_3d": 4.6689,
-      "foreign_5d": 5.4839,
-      "foreign_10d": 5.3837,
+      "foreign_1d": -0.2696,
+      "institution_1d": -0.0464,
+      "personal_1d": 0.3286,
+      "foreign_3d": 4.4874,
+      "foreign_5d": 5.3024,
+      "foreign_10d": 5.2022,
       "foreign_streak": -1
     },
     "series": [
@@ -360,9 +360,9 @@
       },
       {
         "date": "2026-07-24",
-        "foreign": -0.0881,
-        "institution": -0.0526,
-        "personal": 0.1486
+        "foreign": -0.2696,
+        "institution": -0.0464,
+        "personal": 0.3286
       }
     ]
   },
@@ -522,7 +522,7 @@
       "max_points": 15,
       "available": true,
       "coverage_points": 15,
-      "reason": "외국인 3일 +4.67조 · 10일 +5.38조 · 연속 -1일"
+      "reason": "외국인 3일 +4.49조 · 10일 +5.20조 · 연속 -1일"
     },
     {
       "key": "fx",
@@ -531,7 +531,7 @@
       "max_points": 10,
       "available": true,
       "coverage_points": 10,
-      "reason": "USD/KRW 5일 -1.18% · 현재 1,473.4원"
+      "reason": "USD/KRW 5일 -1.28% · 현재 1,471.9원"
     },
     {
       "key": "semiconductor",
@@ -540,7 +540,7 @@
       "max_points": 10,
       "available": true,
       "coverage_points": 10,
-      "reason": "SOXX 5일 +3.91% · 한국 반도체 상대강도 +0.30%p · SOXX 20일선 하단"
+      "reason": "SOXX 5일 +3.91% · 한국 반도체 상대강도 +0.28%p · SOXX 20일선 하단"
     },
     {
       "key": "macro_risk",
@@ -563,9 +563,9 @@
   ],
   "reasons": {
     "bull": [
-      "외국인 3일 +4.67조 · 10일 +5.38조 · 연속 -1일",
+      "외국인 3일 +4.49조 · 10일 +5.20조 · 연속 -1일",
       "1차 회복 구간 169~172 진입",
-      "USD/KRW 5일 -1.18% · 현재 1,473.4원"
+      "USD/KRW 5일 -1.28% · 현재 1,471.9원"
     ],
     "bear": [
       "주봉 RSI 하락 · 히스토그램 2주 악화 (진행 주 제외)"
@@ -2356,7 +2356,7 @@
       },
       {
         "date": "2026-07-24",
-        "close": 6982.68
+        "close": 6906.64
       }
     ],
     "SOXX": [
@@ -3080,7 +3080,7 @@
       },
       {
         "date": "2026-07-24",
-        "close": 1473.4
+        "close": 1471.9
       }
     ]
   },

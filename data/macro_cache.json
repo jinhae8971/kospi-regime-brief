@@ -1550,7 +1550,24 @@
       "2026-07-20": 100.989998,
       "2026-07-21": 101.18,
       "2026-07-22": 101.139999,
-      "2026-07-23": 101.459
+      "2026-07-23": 101.445999
+    }
+  },
+  "fred_health": {
+    "VIXCLS": {
+      "fail_streak": 1,
+      "last_ok": null,
+      "last_probe": "2026-07-24"
+    },
+    "DGS10": {
+      "fail_streak": 1,
+      "last_ok": null,
+      "last_probe": "2026-07-24"
+    },
+    "DTWEXBGS": {
+      "fail_streak": 1,
+      "last_ok": null,
+      "last_probe": "2026-07-24"
     }
   }
 }
