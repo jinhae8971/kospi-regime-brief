@@ -36,6 +36,11 @@ HISTORY_PATH = DATA_DIR / "history.json"
 METHODOLOGY_PATH = DATA_DIR / "methodology.json"
 MACRO_CACHE_PATH = DATA_DIR / "macro_cache.json"
 MACRO_CACHE_MAX = 800
+# FRED graph 호스트(fred.stlouisfed.org)가 러너 IP에서 차단되면 매 실행마다
+# 타임아웃을 그대로 소모한다. 연속 실패가 임계를 넘으면 해당 계층을 건너뛰되,
+# 주기적으로 한 번씩 다시 두드려 복구를 감지한다.
+FRED_BREAKER_THRESHOLD = 3
+FRED_BREAKER_PROBE_DAYS = 7
 NOTIFICATION_PATH = DATA_DIR / "notification.json"
 KST = timezone(timedelta(hours=9))
 
@@ -629,6 +634,42 @@ def fetch_from_cache(cache: dict, series_id: str, days: int = 760):
     }
 
 
+# --- FRED graph 서킷 브레이커 -------------------------------------------
+
+def breaker_slot(cache: dict, series_id: str) -> dict:
+    return cache.setdefault("fred_health", {}).setdefault(
+        series_id, {"fail_streak": 0, "last_ok": None, "last_probe": None}
+    )
+
+
+def breaker_should_skip(cache: dict, series_id: str) -> tuple[bool, str]:
+    """차단 여부와 사유를 돌려준다. 차단 중이라도 복구 확인일이면 통과시킨다."""
+    slot = breaker_slot(cache, series_id)
+    streak = int(slot.get("fail_streak") or 0)
+    if streak < FRED_BREAKER_THRESHOLD:
+        return False, ""
+    last_probe = slot.get("last_probe")
+    if last_probe:
+        try:
+            age = (now_kst().date() - date.fromisoformat(last_probe)).days
+        except ValueError:
+            age = FRED_BREAKER_PROBE_DAYS
+        if age < FRED_BREAKER_PROBE_DAYS:
+            return True, f"{streak}회 연속 실패 · 다음 복구 확인까지 {FRED_BREAKER_PROBE_DAYS - age}일"
+    return False, ""
+
+
+def breaker_record(cache: dict, series_id: str, ok: bool) -> None:
+    slot = breaker_slot(cache, series_id)
+    today = now_kst().date().isoformat()
+    slot["last_probe"] = today
+    if ok:
+        slot["fail_streak"] = 0
+        slot["last_ok"] = today
+    else:
+        slot["fail_streak"] = int(slot.get("fail_streak") or 0) + 1
+
+
 def fetch_macro_series(
     session: requests.Session,
     series_id: str,
@@ -654,8 +695,12 @@ def fetch_macro_series(
     # FRED 계열은 우선순위대로. 확보되면 즉시 채택한다.
     tiers: list[tuple[str, Any]] = [
         ("api", lambda: fetch_fred_api(session, series_id, days)),
-        ("fred", lambda: fetch_fred(session, series_id, days)),
     ]
+    skip_fred, skip_reason = breaker_should_skip(cache, series_id)
+    if skip_fred:
+        attempts.append(f"fred=차단({skip_reason})")
+    else:
+        tiers.append(("fred", lambda: fetch_fred(session, series_id, days)))
 
     # 대체 계층은 순위를 고정하지 않는다. CBOE 공식 파일은 하루 늦게 갱신되고
     # 프록시가 더 신선한 날이 있어서, 실제로 받아본 뒤 기준일이 앞선 쪽을 쓴다.
@@ -666,6 +711,8 @@ def fetch_macro_series(
 
     for label, loader in tiers:
         result = attempt(label, loader)
+        if label == "fred":
+            breaker_record(cache, series_id, result is not None)
         if result is None:
             continue
         series, source = result
