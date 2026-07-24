@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "methodology_version": "2026-07-18.v1",
-  "updated_at": "2026-07-24T09:03:51+09:00",
+  "updated_at": "2026-07-24T09:06:43+09:00",
   "observations": [
     {
       "market_key": "US-2026-07-17_KR-2026-07-16",
@@ -1272,7 +1272,7 @@
     },
     {
       "market_key": "US-2026-07-23_KR-2026-07-24",
-      "generated_at": "2026-07-24T09:03:51+09:00",
+      "generated_at": "2026-07-24T09:06:43+09:00",
       "market_dates": {
         "us": "2026-07-23",
         "kr": "2026-07-24",
@@ -1364,7 +1364,7 @@
         "score": 31,
         "near_end_probability": 64,
         "ongoing_probability": 36,
-        "change_pp": -2,
+        "change_pp": 0,
         "summary": "1차 회복 구간에 진입했지만 higher low 확인이 필요합니다.",
         "confidence": "높음",
         "probability_type": "rules_based_estimate"
@@ -1405,21 +1405,21 @@
         "KOSPI": {
           "symbol": "KOSPI",
           "date": "2026-07-24",
-          "close": 6999.14,
-          "change_1d_pct": -1.377,
-          "change_5d_pct": 2.618,
-          "change_20d_pct": -21.625,
-          "ma5": 6831.59,
-          "ma20": 7448.559
+          "close": 6982.68,
+          "change_1d_pct": -1.609,
+          "change_5d_pct": 2.376,
+          "change_20d_pct": -21.809,
+          "ma5": 6828.298,
+          "ma20": 7447.736
         },
         "USDKRW": {
           "symbol": "USD/KRW",
           "date": "2026-07-24",
-          "close": 1474.2,
-          "change_1d_pct": -0.156,
-          "change_5d_pct": -1.127,
-          "ma20": 1508.77,
-          "ma20_slope": -15.14
+          "close": 1473.4,
+          "change_1d_pct": -0.21,
+          "change_5d_pct": -1.18,
+          "ma20": 1508.73,
+          "ma20_slope": -15.18
         },
         "SOXX": {
           "symbol": "SOXX",
@@ -1436,13 +1436,13 @@
       },
       "flows": {
         "date": "2026-07-24",
-        "foreign_1d": 0.0,
-        "institution_1d": 0.0,
-        "personal_1d": 0.0,
-        "foreign_3d": 4.757,
-        "foreign_5d": 5.572,
-        "foreign_10d": 5.4718,
-        "foreign_streak": 0
+        "foreign_1d": -0.0881,
+        "institution_1d": -0.0526,
+        "personal_1d": 0.1486,
+        "foreign_3d": 4.6689,
+        "foreign_5d": 5.4839,
+        "foreign_10d": 5.3837,
+        "foreign_streak": -1
       },
       "signal_summary": {
         "met": 2,
@@ -1483,7 +1483,7 @@
           "max_points": 15,
           "available": true,
           "coverage_points": 15,
-          "reason": "외국인 3일 +4.76조 · 10일 +5.47조 · 연속 +0일"
+          "reason": "외국인 3일 +4.67조 · 10일 +5.38조 · 연속 -1일"
         },
         {
           "key": "fx",
@@ -1492,7 +1492,7 @@
           "max_points": 10,
           "available": true,
           "coverage_points": 10,
-          "reason": "USD/KRW 5일 -1.13% · 현재 1,474.2원"
+          "reason": "USD/KRW 5일 -1.18% · 현재 1,473.4원"
         },
         {
           "key": "semiconductor",
@@ -1501,7 +1501,7 @@
           "max_points": 10,
           "available": true,
           "coverage_points": 10,
-          "reason": "SOXX 5일 +3.91% · 한국 반도체 상대강도 +0.71%p · SOXX 20일선 하단"
+          "reason": "SOXX 5일 +3.91% · 한국 반도체 상대강도 +0.30%p · SOXX 20일선 하단"
         },
         {
           "key": "macro_risk",
@@ -1524,17 +1524,16 @@
       ],
       "reasons": {
         "bull": [
-          "외국인 3일 +4.76조 · 10일 +5.47조 · 연속 +0일",
+          "외국인 3일 +4.67조 · 10일 +5.38조 · 연속 -1일",
           "1차 회복 구간 169~172 진입",
-          "USD/KRW 5일 -1.13% · 현재 1,474.2원"
+          "USD/KRW 5일 -1.18% · 현재 1,473.4원"
         ],
         "bear": [
           "주봉 RSI 하락 · 히스토그램 2주 악화 (진행 주 제외)"
         ]
       },
       "change_reasons": [
-        "반도체 +4→+1",
-        "외국인 수급 +15→+13"
+        "핵심 점수 변화 없음"
       ]
     }
   ]
