@@ -34,6 +34,8 @@ DATA_DIR = ROOT / "data"
 LATEST_PATH = DATA_DIR / "latest.json"
 HISTORY_PATH = DATA_DIR / "history.json"
 METHODOLOGY_PATH = DATA_DIR / "methodology.json"
+MACRO_CACHE_PATH = DATA_DIR / "macro_cache.json"
+MACRO_CACHE_MAX = 800
 NOTIFICATION_PATH = DATA_DIR / "notification.json"
 KST = timezone(timedelta(hours=9))
 
@@ -436,7 +438,7 @@ def fetch_naver_flows(
     }
 
 
-FRED_TIMEOUT = 15
+FRED_TIMEOUT = 8
 
 # FRED graph 엔드포인트가 러너 IP에서 차단될 때 쓰는 대체 심볼.
 # scale: FRED 시계열과 단위를 맞추기 위한 배수.
@@ -537,39 +539,177 @@ def fetch_fred(session: requests.Session, series_id: str, days: int = 760) -> tu
     }
 
 
+
+# --- 무키 공식 소스 (FRED 차단 시 1차 대안) -------------------------------
+
+def fetch_treasury_10y(session: requests.Session, days: int = 760):
+    """美 재무부 일별 국채수익률 곡선 — DGS10 의 원출처. API 키 불필요."""
+    year = now_kst().year
+    rows = []
+    for target in (year, year - 1):
+        response = session.get(
+            "https://home.treasury.gov/resource-center/data-chart-center/"
+            f"interest-rates/daily-treasury-rates.csv/{target}/all",
+            params={"type": "daily_treasury_yield_curve",
+                    "field_tdr_date_value": target, "_format": "csv"},
+            timeout=25,
+        )
+        response.raise_for_status()
+        part = pd.read_csv(io.StringIO(response.text))
+        if "10 Yr" in part.columns:
+            rows.append(part[["Date", "10 Yr"]].rename(columns={"Date": "date", "10 Yr": "value"}))
+    if not rows:
+        raise DataError("Treasury: 10Y column not found")
+    frame = pd.concat(rows, ignore_index=True)
+    frame["date"] = pd.to_datetime(frame["date"], format="%m/%d/%Y", errors="coerce")
+    frame["value"] = pd.to_numeric(frame["value"], errors="coerce")
+    series = _trim_series(frame.drop_duplicates("date"), "DGS10", days)
+    return series, {
+        "name": "US Treasury 일별 수익률곡선 10Y",
+        "url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates",
+        "as_of": series.index[-1].date().isoformat(),
+        "status": "ok",
+    }
+
+
+def fetch_cboe_vix(session: requests.Session, days: int = 760):
+    """CBOE 공식 VIX 일별 종가 — VIXCLS 의 원출처. API 키 불필요."""
+    response = session.get(
+        "https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv",
+        timeout=25,
+    )
+    response.raise_for_status()
+    frame = pd.read_csv(io.StringIO(response.text))[["DATE", "CLOSE"]]
+    frame.columns = ["date", "value"]
+    frame["date"] = pd.to_datetime(frame["date"], errors="coerce")
+    frame["value"] = pd.to_numeric(frame["value"], errors="coerce")
+    series = _trim_series(frame, "VIXCLS", days)
+    return series, {
+        "name": "CBOE VIX 공식 일별 종가",
+        "url": "https://www.cboe.com/tradable_products/vix/",
+        "as_of": series.index[-1].date().isoformat(),
+        "status": "ok",
+    }
+
+
+OFFICIAL_SOURCES = {"DGS10": fetch_treasury_10y, "VIXCLS": fetch_cboe_vix}
+
+
+# --- 매크로 캐시 -----------------------------------------------------------
+
+def load_macro_cache() -> dict[str, Any]:
+    return load_json(MACRO_CACHE_PATH, {}) or {}
+
+
+def cache_store(cache: dict, series_id: str, series: pd.Series) -> None:
+    """라이브 수집분을 캐시에 병합한다. 실측값이 항상 우선한다."""
+    slot = cache.setdefault("series", {}).setdefault(series_id, {})
+    for stamp, value in series.items():
+        if pd.notna(value):
+            slot[stamp.date().isoformat()] = round(float(value), 6)
+    if len(slot) > MACRO_CACHE_MAX:
+        for key in sorted(slot)[:-MACRO_CACHE_MAX]:
+            slot.pop(key, None)
+
+
+def fetch_from_cache(cache: dict, series_id: str, days: int = 760):
+    slot = (cache.get("series") or {}).get(series_id) or {}
+    if len(slot) < 5:
+        raise DataError(f"cache miss for {series_id}")
+    frame = pd.DataFrame({"date": pd.to_datetime(list(slot.keys())),
+                          "value": pd.to_numeric(list(slot.values()))})
+    series = _trim_series(frame, series_id, days)
+    age = (now_kst().date() - series.index[-1].date()).days
+    return series, {
+        "name": f"{series_id} 캐시 (실측 보관본)",
+        "url": "",
+        "as_of": series.index[-1].date().isoformat(),
+        "status": "cache",
+        "age_days": age,
+    }
+
+
 def fetch_macro_series(
     session: requests.Session,
     series_id: str,
     warnings: list[str],
+    cache: dict[str, Any] | None = None,
     days: int = 760,
 ) -> tuple[pd.Series, dict[str, Any]]:
-    """공식 API → graph CSV → 시장 프록시 순으로 시도한다.
+    """공식 API → FRED graph → 원출처(무키) → 시장 프록시 → 캐시 순으로 시도한다.
 
-    한 계층이라도 성공하면 데이터는 확보된 것이므로 errors 가 아니라
-    warnings 에 기록한다. 결측(전 계층 실패)일 때만 호출부가 errors 로 올린다.
+    앞의 네 계층은 라이브 수집이므로 성공 시 캐시에 병합한다. FRED 가 간헐적으로
+    열릴 때마다 실측값이 캐시에 쌓이므로, 전 소스가 막혀도 최근 실측으로 버틴다.
     """
+    cache = cache if cache is not None else {}
     attempts: list[str] = []
 
-    for label, loader in (
-        ("api", lambda: fetch_fred_api(session, series_id, days)),
-        ("graph", lambda: fetch_fred(session, series_id, days)),
-        ("proxy", lambda: fetch_fred_proxy(series_id, days)),
-    ):
+    def attempt(label: str, loader: Any):
         try:
-            series, source = loader()
+            return loader()
         except Exception as exc:                       # noqa: BLE001
-            reason = str(exc).split("(Caused by")[0].strip()[:120]
-            attempts.append(f"{label}={reason}")
+            attempts.append(f"{label}={str(exc).split('(Caused by')[0].strip()[:90]}")
+            return None
+
+    # FRED 계열은 우선순위대로. 확보되면 즉시 채택한다.
+    tiers: list[tuple[str, Any]] = [
+        ("api", lambda: fetch_fred_api(session, series_id, days)),
+        ("fred", lambda: fetch_fred(session, series_id, days)),
+    ]
+
+    # 대체 계층은 순위를 고정하지 않는다. CBOE 공식 파일은 하루 늦게 갱신되고
+    # 프록시가 더 신선한 날이 있어서, 실제로 받아본 뒤 기준일이 앞선 쪽을 쓴다.
+    alternates: list[tuple[str, Any]] = []
+    if series_id in OFFICIAL_SOURCES:
+        alternates.append(("official", lambda: OFFICIAL_SOURCES[series_id](session, days)))
+    alternates.append(("proxy", lambda: fetch_fred_proxy(series_id, days)))
+
+    for label, loader in tiers:
+        result = attempt(label, loader)
+        if result is None:
             continue
+        series, source = result
 
         source["tier"] = label
-        if label != "api" and attempts:
-            warnings.append(f"FRED {series_id}: {label} 계층으로 대체 ({'; '.join(attempts)})")
-        if source.get("status", "").startswith("proxy"):
-            warnings.append(
-                f"FRED {series_id}: 대체 소스 {source['name']} 사용"
-                + (" — 근사치" if source["status"] == "proxy_approx" else "")
-            )
+        if label != "cache":
+            cache_store(cache, series_id, series)      # 라이브 실측만 캐시에 반영
+
+        if label in ("official", "proxy", "cache"):
+            detail = {
+                "official": "원출처 직접 수집",
+                "proxy": "시장 프록시" + (" · 근사치" if source.get("status") == "proxy_approx" else ""),
+                "cache": f"캐시 재사용 · {source.get('age_days', '?')}일 전 실측",
+            }[label]
+            warnings.append(f"FRED {series_id}: {label} 계층 사용 ({detail}) — {source['name']}")
+        return series, source
+
+    # 대체 계층: 성공한 것들 중 기준일이 가장 앞선 소스를 채택
+    harvested = []
+    for label, loader in alternates:
+        result = attempt(label, loader)
+        if result is not None:
+            harvested.append((label, result[0], result[1]))
+    if harvested:
+        harvested.sort(key=lambda item: item[2]["as_of"], reverse=True)
+        label, series, source = harvested[0]
+        source["tier"] = label
+        cache_store(cache, series_id, series)
+        for other_label, other_series, _other in harvested[1:]:
+            cache_store(cache, series_id, other_series)   # 탈락분도 캐시에는 축적
+        detail = ("원출처 직접 수집" if label == "official"
+                  else "시장 프록시" + (" · 근사치" if source.get("status") == "proxy_approx" else ""))
+        picked = f"{len(harvested)}개 후보 중 최신({source['as_of']})"
+        warnings.append(f"FRED {series_id}: {label} 계층 사용 ({detail}, {picked}) — {source['name']}")
+        return series, source
+
+    # 최후: 캐시에 남은 실측값
+    result = attempt("cache", lambda: fetch_from_cache(cache, series_id, days))
+    if result is not None:
+        series, source = result
+        source["tier"] = "cache"
+        warnings.append(
+            f"FRED {series_id}: cache 계층 사용 (캐시 재사용 · {source.get('age_days','?')}일 전 실측)"
+        )
         return series, source
 
     raise DataError(f"all tiers failed ({'; '.join(attempts)})")
@@ -1133,6 +1273,7 @@ def collect_snapshot(previous: dict[str, Any] | None = None) -> dict[str, Any]:
     session = http_session()
     errors: list[str] = []
     warnings: list[str] = []
+    cache = load_macro_cache()
     sources: list[dict[str, Any]] = []
 
     ewy_history, source = fetch_nasdaq_history(session, "EWY")
@@ -1186,7 +1327,7 @@ def collect_snapshot(previous: dict[str, Any] | None = None) -> dict[str, Any]:
     fred_data: dict[str, pd.Series] = {}
     for series_id in ("VIXCLS", "DGS10", "DTWEXBGS"):
         try:
-            fred_data[series_id], source = fetch_macro_series(session, series_id, warnings)
+            fred_data[series_id], source = fetch_macro_series(session, series_id, warnings, cache)
             sources.append(source)
         except Exception as exc:
             errors.append(f"FRED {series_id}: {exc}")
@@ -1197,11 +1338,13 @@ def collect_snapshot(previous: dict[str, Any] | None = None) -> dict[str, Any]:
     except Exception as exc:
         errors.append(f"Naver USD/KRW: {exc}")
         try:
-            fx_series, source = fetch_macro_series(session, "DEXKOUS", warnings)
+            fx_series, source = fetch_macro_series(session, "DEXKOUS", warnings, cache)
             sources.append(source)
         except Exception as fallback_exc:
             fx_series = pd.Series(dtype="float64")
             errors.append(f"FRED DEXKOUS: {fallback_exc}")
+    json_dump(MACRO_CACHE_PATH, cache)   # 라이브 실측 보관 (data/*.json 화이트리스트에 포함)
+
     fx_current_source = None
     if not fx_series.empty:
         fx_series, fx_current_source = append_current_fx(session, fx_series)
