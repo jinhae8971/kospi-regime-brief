@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "methodology_version": "2026-07-18.v1",
-  "updated_at": "2026-08-11T07:56:49+09:00",
+  "updated_at": "2026-08-12T08:03:59+09:00",
   "observations": [
     {
       "market_key": "US-2026-07-17_KR-2026-07-16",
@@ -4759,6 +4759,276 @@
       "change_reasons": [
         "외국인 수급 -13→-15",
         "반도체 +4→+2"
+      ]
+    },
+    {
+      "market_key": "US-2026-08-11_KR-2026-08-11",
+      "generated_at": "2026-08-12T08:03:59+09:00",
+      "market_dates": {
+        "us": "2026-08-11",
+        "kr": "2026-08-11",
+        "flow": "2026-08-11",
+        "fx": "2026-08-11",
+        "macro": "2026-08-11",
+        "soxx": "2026-08-11",
+        "samsung": "2026-08-12",
+        "hynix": "2026-08-12",
+        "dollar": "2026-08-11",
+        "us10y": "2026-08-11"
+      },
+      "status": {
+        "code": "OK",
+        "coverage_pct": 100,
+        "confidence": "높음",
+        "message": "모든 핵심 데이터 정상",
+        "errors": [],
+        "warnings": [
+          "FRED VIXCLS: proxy 계층 사용 (시장 프록시, 2개 후보 중 최신(2026-08-11)) — ^VIX (FRED VIXCLS 대체)",
+          "FRED DGS10: official 계층 사용 (원출처 직접 수집, 2개 후보 중 최신(2026-08-11)) — US Treasury 일별 수익률곡선 10Y",
+          "FRED DTWEXBGS: proxy 계층 사용 (시장 프록시 · 근사치, 1개 후보 중 최신(2026-08-11)) — DX-Y.NYB (FRED DTWEXBGS 대체)"
+        ],
+        "freshness": [
+          {
+            "market": "us",
+            "as_of": "2026-08-11",
+            "age_days": 1,
+            "stale": false
+          },
+          {
+            "market": "kr",
+            "as_of": "2026-08-11",
+            "age_days": 1,
+            "stale": false
+          },
+          {
+            "market": "flow",
+            "as_of": "2026-08-11",
+            "age_days": 1,
+            "stale": false
+          },
+          {
+            "market": "fx",
+            "as_of": "2026-08-11",
+            "age_days": 1,
+            "stale": false
+          },
+          {
+            "market": "macro",
+            "as_of": "2026-08-11",
+            "age_days": 1,
+            "stale": false
+          },
+          {
+            "market": "soxx",
+            "as_of": "2026-08-11",
+            "age_days": 1,
+            "stale": false
+          },
+          {
+            "market": "samsung",
+            "as_of": "2026-08-12",
+            "age_days": 0,
+            "stale": false
+          },
+          {
+            "market": "hynix",
+            "as_of": "2026-08-12",
+            "age_days": 0,
+            "stale": false
+          },
+          {
+            "market": "dollar",
+            "as_of": "2026-08-11",
+            "age_days": 1,
+            "stale": false
+          },
+          {
+            "market": "us10y",
+            "as_of": "2026-08-11",
+            "age_days": 1,
+            "stale": false
+          }
+        ]
+      },
+      "verdict": {
+        "label": "막바지 우세",
+        "score": 15,
+        "near_end_probability": 57,
+        "ongoing_probability": 43,
+        "change_pp": 3,
+        "summary": "가격은 막바지 후보권이지만 주봉 모멘텀과 수급상 바닥은 미확인입니다.",
+        "confidence": "높음",
+        "probability_type": "rules_based_estimate"
+      },
+      "scenarios": [
+        {
+          "key": "direct",
+          "label": "저점 형성·직접 반등",
+          "probability": 40,
+          "condition": "169~177.5 회복 후 higher low"
+        },
+        {
+          "key": "retest",
+          "label": "154~156 재시험·바닥 다지기",
+          "probability": 48,
+          "condition": "지지 재시험 시 거래량 감소"
+        },
+        {
+          "key": "deep",
+          "label": "145~135 심화 조정",
+          "probability": 12,
+          "condition": "주봉 153 하회 시 위험 확대"
+        }
+      ],
+      "metrics": {
+        "EWY": {
+          "symbol": "EWY",
+          "date": "2026-08-11",
+          "close": 167.22,
+          "change_1d_pct": 2.513,
+          "change_5d_pct": -2.291,
+          "change_20d_pct": -5.515,
+          "ma5": 165.938,
+          "ma20": 163.8395,
+          "volume": 13153435,
+          "volume_ratio_20d": 0.538
+        },
+        "KOSPI": {
+          "symbol": "KOSPI",
+          "date": "2026-08-11",
+          "close": 6345.53,
+          "change_1d_pct": 0.728,
+          "change_5d_pct": -0.211,
+          "change_20d_pct": -6.778,
+          "ma5": 6359.72,
+          "ma20": 6492.8965
+        },
+        "USDKRW": {
+          "symbol": "USD/KRW",
+          "date": "2026-08-11",
+          "close": 1413.5,
+          "change_1d_pct": -0.423,
+          "change_5d_pct": -1.223,
+          "ma20": 1451.835,
+          "ma20_slope": -22.035
+        },
+        "SOXX": {
+          "symbol": "SOXX",
+          "date": "2026-08-11",
+          "close": 534.2,
+          "change_1d_pct": 0.909,
+          "change_5d_pct": -1.477,
+          "change_20d_pct": -5.937,
+          "ma5": 534.016,
+          "ma20": 526.013,
+          "volume": 7173697,
+          "volume_ratio_20d": 0.67
+        }
+      },
+      "flows": {
+        "date": "2026-08-11",
+        "foreign_1d": 0.0535,
+        "institution_1d": 0.0212,
+        "personal_1d": -0.0708,
+        "foreign_3d": -2.3025,
+        "foreign_5d": -4.1454,
+        "foreign_10d": -0.0202,
+        "foreign_streak": 1
+      },
+      "signal_summary": {
+        "met": 1,
+        "total": 6
+      },
+      "factors": [
+        {
+          "key": "price_structure",
+          "label": "가격 구조",
+          "points": 3,
+          "max_points": 20,
+          "available": true,
+          "coverage_points": 20,
+          "reason": "핵심 피보나치 지지 155.58 상단 유지"
+        },
+        {
+          "key": "daily_reversal",
+          "label": "단기 반전",
+          "points": 12,
+          "max_points": 15,
+          "available": true,
+          "coverage_points": 15,
+          "reason": "5일선 상단 · 5일선 상승 · 단기 저점 상승 · 일봉 MACD 개선 · 거래량 반전 확인 전"
+        },
+        {
+          "key": "weekly_momentum",
+          "label": "주봉 모멘텀",
+          "points": -2,
+          "max_points": 15,
+          "available": true,
+          "coverage_points": 15,
+          "reason": "강세장 RSI 지지 · 히스토그램 2주 악화 (진행 주 제외)"
+        },
+        {
+          "key": "foreign_flow",
+          "label": "외국인 수급",
+          "points": -8,
+          "max_points": 15,
+          "available": true,
+          "coverage_points": 15,
+          "reason": "외국인 3일 -2.30조 · 10일 -0.02조 · 연속 +1일"
+        },
+        {
+          "key": "fx",
+          "label": "원/달러",
+          "points": 7,
+          "max_points": 10,
+          "available": true,
+          "coverage_points": 10,
+          "reason": "USD/KRW 5일 -1.22% · 현재 1,413.5원"
+        },
+        {
+          "key": "semiconductor",
+          "label": "반도체",
+          "points": -4,
+          "max_points": 10,
+          "available": true,
+          "coverage_points": 10,
+          "reason": "SOXX 5일 -1.48% · 한국 반도체 상대강도 -8.39%p · SOXX 20일선 상단"
+        },
+        {
+          "key": "macro_risk",
+          "label": "글로벌 위험",
+          "points": 5,
+          "max_points": 10,
+          "available": true,
+          "coverage_points": 10,
+          "reason": "VIX 15.3 (-7.4%/5D) · 달러 5일 -0.1% · 미10년 4.70% (+7bp/5D)"
+        },
+        {
+          "key": "wave",
+          "label": "파동 완성도",
+          "points": 2,
+          "max_points": 5,
+          "available": true,
+          "coverage_points": 5,
+          "reason": "C/A가 통상 조정 범위 0.618~1.272"
+        }
+      ],
+      "reasons": {
+        "bull": [
+          "5일선 상단 · 5일선 상승 · 단기 저점 상승 · 일봉 MACD 개선 · 거래량 반전 확인 전",
+          "USD/KRW 5일 -1.22% · 현재 1,413.5원",
+          "VIX 15.3 (-7.4%/5D) · 달러 5일 -0.1% · 미10년 4.70% (+7bp/5D)"
+        ],
+        "bear": [
+          "외국인 3일 -2.30조 · 10일 -0.02조 · 연속 +1일",
+          "SOXX 5일 -1.48% · 한국 반도체 상대강도 -8.39%p · SOXX 20일선 상단",
+          "강세장 RSI 지지 · 히스토그램 2주 악화 (진행 주 제외)"
+        ]
+      },
+      "change_reasons": [
+        "외국인 수급 -15→-8",
+        "반도체 +2→-4",
+        "단기 반전 +6→+12"
       ]
     }
   ]
