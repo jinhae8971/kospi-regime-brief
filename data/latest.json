@@ -1,19 +1,19 @@
 {
   "schema_version": 1,
   "methodology_version": "2026-07-18.v1",
-  "generated_at": "2026-08-19T07:42:27+09:00",
-  "market_key": "US-2026-08-18_KR-2026-08-18",
+  "generated_at": "2026-08-20T07:41:41+09:00",
+  "market_key": "US-2026-08-19_KR-2026-08-19",
   "market_dates": {
-    "us": "2026-08-18",
-    "kr": "2026-08-18",
-    "flow": "2026-08-18",
-    "fx": "2026-08-18",
-    "macro": "2026-08-18",
-    "soxx": "2026-08-18",
-    "samsung": "2026-08-18",
-    "hynix": "2026-08-18",
-    "dollar": "2026-08-18",
-    "us10y": "2026-08-18"
+    "us": "2026-08-19",
+    "kr": "2026-08-19",
+    "flow": "2026-08-19",
+    "fx": "2026-08-19",
+    "macro": "2026-08-19",
+    "soxx": "2026-08-19",
+    "samsung": "2026-08-19",
+    "hynix": "2026-08-19",
+    "dollar": "2026-08-19",
+    "us10y": "2026-08-19"
   },
   "status": {
     "code": "OK",
@@ -22,68 +22,68 @@
     "message": "모든 핵심 데이터 정상",
     "errors": [],
     "warnings": [
-      "FRED VIXCLS: proxy 계층 사용 (시장 프록시, 2개 후보 중 최신(2026-08-18)) — ^VIX (FRED VIXCLS 대체)",
-      "FRED DGS10: official 계층 사용 (원출처 직접 수집, 2개 후보 중 최신(2026-08-18)) — US Treasury 일별 수익률곡선 10Y",
-      "FRED DTWEXBGS: proxy 계층 사용 (시장 프록시 · 근사치, 1개 후보 중 최신(2026-08-18)) — DX-Y.NYB (FRED DTWEXBGS 대체)"
+      "FRED VIXCLS: proxy 계층 사용 (시장 프록시, 2개 후보 중 최신(2026-08-19)) — ^VIX (FRED VIXCLS 대체)",
+      "FRED DGS10: official 계층 사용 (원출처 직접 수집, 2개 후보 중 최신(2026-08-19)) — US Treasury 일별 수익률곡선 10Y",
+      "FRED DTWEXBGS: proxy 계층 사용 (시장 프록시 · 근사치, 1개 후보 중 최신(2026-08-19)) — DX-Y.NYB (FRED DTWEXBGS 대체)"
     ],
     "freshness": [
       {
         "market": "us",
-        "as_of": "2026-08-18",
+        "as_of": "2026-08-19",
         "age_days": 1,
         "stale": false
       },
       {
         "market": "kr",
-        "as_of": "2026-08-18",
+        "as_of": "2026-08-19",
         "age_days": 1,
         "stale": false
       },
       {
         "market": "flow",
-        "as_of": "2026-08-18",
+        "as_of": "2026-08-19",
         "age_days": 1,
         "stale": false
       },
       {
         "market": "fx",
-        "as_of": "2026-08-18",
+        "as_of": "2026-08-19",
         "age_days": 1,
         "stale": false
       },
       {
         "market": "macro",
-        "as_of": "2026-08-18",
+        "as_of": "2026-08-19",
         "age_days": 1,
         "stale": false
       },
       {
         "market": "soxx",
-        "as_of": "2026-08-18",
+        "as_of": "2026-08-19",
         "age_days": 1,
         "stale": false
       },
       {
         "market": "samsung",
-        "as_of": "2026-08-18",
+        "as_of": "2026-08-19",
         "age_days": 1,
         "stale": false
       },
       {
         "market": "hynix",
-        "as_of": "2026-08-18",
+        "as_of": "2026-08-19",
         "age_days": 1,
         "stale": false
       },
       {
         "market": "dollar",
-        "as_of": "2026-08-18",
+        "as_of": "2026-08-19",
         "age_days": 1,
         "stale": false
       },
       {
         "market": "us10y",
-        "as_of": "2026-08-18",
+        "as_of": "2026-08-19",
         "age_days": 1,
         "stale": false
       }
@@ -91,10 +91,10 @@
   },
   "verdict": {
     "label": "막바지 우세",
-    "score": 37,
-    "near_end_probability": 67,
-    "ongoing_probability": 33,
-    "change_pp": -13,
+    "score": 17,
+    "near_end_probability": 58,
+    "ongoing_probability": 42,
+    "change_pp": -9,
     "summary": "1차 회복 구간에 진입했지만 higher low 확인이 필요합니다.",
     "confidence": "높음",
     "probability_type": "rules_based_estimate"
@@ -103,19 +103,19 @@
     {
       "key": "direct",
       "label": "저점 형성·직접 반등",
-      "probability": 46,
+      "probability": 40,
       "condition": "169~177.5 회복 후 higher low"
     },
     {
       "key": "retest",
       "label": "154~156 재시험·바닥 다지기",
-      "probability": 46,
+      "probability": 48,
       "condition": "지지 재시험 시 거래량 감소"
     },
     {
       "key": "deep",
       "label": "145~135 심화 조정",
-      "probability": 8,
+      "probability": 12,
       "condition": "주봉 153 하회 시 위험 확대"
     }
   ],
@@ -123,19 +123,19 @@
   "metrics": {
     "EWY": {
       "symbol": "EWY",
-      "date": "2026-08-18",
-      "close": 170.19,
-      "change_1d_pct": -8.055,
-      "change_5d_pct": 1.764,
-      "change_20d_pct": -1.567,
-      "ma5": 177.904,
-      "ma20": 166.6515,
-      "volume": 34271111,
-      "volume_ratio_20d": 1.491
+      "date": "2026-08-19",
+      "close": 174.395,
+      "change_1d_pct": 2.555,
+      "change_5d_pct": -0.839,
+      "change_20d_pct": 2.326,
+      "ma5": 177.581,
+      "ma20": 166.8427,
+      "volume": 20070635,
+      "volume_ratio_20d": 0.86
     },
     "EWY_WEEKLY": {
       "date": "2026-08-14",
-      "source_latest_date": "2026-08-18",
+      "source_latest_date": "2026-08-19",
       "provisional": false,
       "current_week_excluded": true,
       "rsi14": 56.39,
@@ -150,106 +150,100 @@
     },
     "KOSPI": {
       "symbol": "KOSPI",
-      "date": "2026-08-18",
-      "close": 6869.83,
-      "change_1d_pct": -1.549,
-      "change_5d_pct": 9.051,
-      "change_20d_pct": 5.426,
-      "ma5": 6717.136,
-      "ma20": 6480.9985
+      "date": "2026-08-19",
+      "close": 6471.17,
+      "change_1d_pct": -5.803,
+      "change_5d_pct": 1.98,
+      "change_20d_pct": -4.102,
+      "ma5": 6742.264,
+      "ma20": 6467.1595
     },
     "USDKRW": {
       "symbol": "USD/KRW",
-      "date": "2026-08-18",
-      "close": 1413.5,
-      "change_1d_pct": -0.282,
-      "change_5d_pct": -0.423,
-      "ma20": 1437.895,
-      "ma20_slope": -18.24
+      "date": "2026-08-19",
+      "close": 1390.0,
+      "change_1d_pct": -1.663,
+      "change_5d_pct": -1.663,
+      "ma20": 1433.27,
+      "ma20_slope": -18.565
     },
     "SOXX": {
       "symbol": "SOXX",
-      "date": "2026-08-18",
-      "close": 531.39,
-      "change_1d_pct": -4.96,
-      "change_5d_pct": -0.526,
-      "change_20d_pct": -3.854,
-      "ma5": 547.656,
-      "ma20": 528.7065,
-      "volume": 9968757,
-      "volume_ratio_20d": 1.022
+      "date": "2026-08-19",
+      "close": 519.67,
+      "change_1d_pct": -2.206,
+      "change_5d_pct": -4.929,
+      "change_20d_pct": -6.453,
+      "ma5": 542.268,
+      "ma20": 526.914,
+      "volume": 5709585,
+      "volume_ratio_20d": 0.587
     },
     "SAMSUNG": {
       "symbol": "Samsung Electronics",
-      "date": "2026-08-18",
-      "close": 268500.0,
-      "change_1d_pct": -2.186,
-      "change_5d_pct": 16.739,
-      "change_20d_pct": 10.041,
-      "ma5": 261200.0,
-      "ma20": 245700.0,
-      "volume": 24003581,
-      "volume_ratio_20d": 0.807
+      "date": "2026-08-19",
+      "close": 247500.0,
+      "change_1d_pct": -7.821,
+      "change_5d_pct": 3.34,
+      "change_20d_pct": -4.44,
+      "ma5": 262800.0,
+      "ma20": 245125.0,
+      "volume": 22683374,
+      "volume_ratio_20d": 0.759
     },
     "HYNIX": {
       "symbol": "SK hynix",
-      "date": "2026-08-18",
-      "close": 1662000.0,
-      "change_1d_pct": 1.033,
-      "change_5d_pct": 17.042,
-      "change_20d_pct": -5.782,
-      "ma5": 1565800.0,
-      "ma20": 1606450.0,
-      "volume": 5121374,
-      "volume_ratio_20d": 0.895
+      "date": "2026-08-19",
+      "close": 1500000.0,
+      "change_1d_pct": -9.747,
+      "change_5d_pct": 5.263,
+      "change_20d_pct": -18.301,
+      "ma5": 1580800.0,
+      "ma20": 1589650.0,
+      "volume": 4206017,
+      "volume_ratio_20d": 0.738
     },
     "VIX": {
       "symbol": "VIX",
-      "date": "2026-08-18",
-      "close": 15.84,
-      "change_1d_pct": 4.279,
-      "change_5d_pct": 3.665,
-      "ma20": 16.398,
-      "ma20_slope": -0.6205
+      "date": "2026-08-19",
+      "close": 14.89,
+      "change_1d_pct": -5.997,
+      "change_5d_pct": 2.337,
+      "ma20": 16.4435,
+      "ma20_slope": -0.5015
     },
     "US10Y": {
       "symbol": "US10Y",
-      "date": "2026-08-18",
-      "close": 4.71,
-      "change_1d_pct": -0.212,
-      "change_5d_pct": 0.213,
-      "ma20": 4.6785,
-      "ma20_slope": 0.026,
-      "change_5d_bp": 1.0
+      "date": "2026-08-19",
+      "close": 4.65,
+      "change_1d_pct": -1.274,
+      "change_5d_pct": -0.641,
+      "ma20": 4.6775,
+      "ma20_slope": 0.0185,
+      "change_5d_bp": -3.0
     },
     "DOLLAR": {
       "symbol": "Broad USD",
-      "date": "2026-08-18",
-      "close": 99.644,
-      "change_1d_pct": 0.004,
-      "change_5d_pct": -0.176,
-      "ma20": 100.2602,
-      "ma20_slope": -0.2613
+      "date": "2026-08-19",
+      "close": 98.768,
+      "change_1d_pct": -0.885,
+      "change_5d_pct": -1.242,
+      "ma20": 100.2014,
+      "ma20_slope": -0.3256
     }
   },
   "flows": {
     "summary": {
-      "date": "2026-08-18",
-      "foreign_1d": 0.0914,
-      "institution_1d": -0.7951,
-      "personal_1d": 0.742,
-      "foreign_3d": 5.2403,
-      "foreign_5d": 8.1292,
-      "foreign_10d": 3.5587,
-      "foreign_streak": 5
+      "date": "2026-08-19",
+      "foreign_1d": -3.4726,
+      "institution_1d": -1.339,
+      "personal_1d": 4.6357,
+      "foreign_3d": -0.3425,
+      "foreign_5d": 4.6031,
+      "foreign_10d": 0.4577,
+      "foreign_streak": -1
     },
     "series": [
-      {
-        "date": "2026-07-21",
-        "foreign": 0.2952,
-        "institution": 1.3744,
-        "personal": -1.6421
-      },
       {
         "date": "2026-07-22",
         "foreign": 2.6211,
@@ -363,6 +357,12 @@
         "foreign": 0.0914,
         "institution": -0.7951,
         "personal": 0.742
+      },
+      {
+        "date": "2026-08-19",
+        "foreign": -3.4726,
+        "institution": -1.339,
+        "personal": 4.6357
       }
     ]
   },
@@ -385,63 +385,63 @@
       "value": 135.48,
       "label": "심화 방어",
       "kind": "risk",
-      "distance_pct": -20.39,
+      "distance_pct": -22.31,
       "state": "돌파"
     },
     {
       "value": 145.81,
       "label": "ABC 1:1 목표",
       "kind": "risk",
-      "distance_pct": -14.33,
+      "distance_pct": -16.39,
       "state": "돌파"
     },
     {
       "value": 153.0,
       "label": "바닥 가설 무효화",
       "kind": "support",
-      "distance_pct": -10.1,
+      "distance_pct": -12.27,
       "state": "상단 유지"
     },
     {
       "value": 155.58,
       "label": "핵심 피보나치 지지",
       "kind": "support",
-      "distance_pct": -8.58,
+      "distance_pct": -10.79,
       "state": "상단 유지"
     },
     {
       "value": 169.0,
       "label": "1차 회복 구간",
       "kind": "confirmation",
-      "distance_pct": -0.7,
-      "state": "접근"
+      "distance_pct": -3.09,
+      "state": "돌파"
     },
     {
       "value": 172.0,
       "label": "1차 회복 상단",
       "kind": "confirmation",
-      "distance_pct": 1.06,
+      "distance_pct": -1.37,
       "state": "접근"
     },
     {
       "value": 177.5,
       "label": "추세 반등 확인",
       "kind": "confirmation",
-      "distance_pct": 4.3,
-      "state": "미도달"
+      "distance_pct": 1.78,
+      "state": "접근"
     },
     {
       "value": 184.2,
       "label": "주봉 강한 확인",
       "kind": "confirmation",
-      "distance_pct": 8.23,
+      "distance_pct": 5.62,
       "state": "미도달"
     },
     {
       "value": 192.25,
       "label": "ABC 하락 종료 확인",
       "kind": "confirmation",
-      "distance_pct": 12.96,
+      "distance_pct": 10.24,
       "state": "미도달"
     }
   ],
@@ -450,7 +450,7 @@
       "key": "support",
       "label": "주봉 153~155 방어",
       "state": "충족",
-      "detail": "EWY 170.19"
+      "detail": "EWY 174.40"
     },
     {
       "key": "recovery",
@@ -461,8 +461,8 @@
     {
       "key": "foreign",
       "label": "외국인 현물 3일 연속 순매수",
-      "state": "충족",
-      "detail": "현재 +5일"
+      "state": "미충족",
+      "detail": "현재 -1일"
     },
     {
       "key": "momentum",
@@ -474,17 +474,17 @@
       "key": "trend",
       "label": "177.5 추세 확인선 돌파",
       "state": "미충족",
-      "detail": "거리 +4.3%"
+      "detail": "거리 +1.8%"
     },
     {
       "key": "strong",
       "label": "184.2 주봉 강한 확인",
       "state": "미충족",
-      "detail": "거리 +8.2%"
+      "detail": "거리 +5.6%"
     }
   ],
   "signal_summary": {
-    "met": 4,
+    "met": 3,
     "total": 6
   },
   "factors": [
@@ -518,38 +518,38 @@
     {
       "key": "foreign_flow",
       "label": "외국인 수급",
-      "points": 15,
+      "points": -4,
       "max_points": 15,
       "available": true,
       "coverage_points": 15,
-      "reason": "외국인 3일 +5.24조 · 10일 +3.56조 · 연속 +5일"
+      "reason": "외국인 3일 -0.34조 · 10일 +0.46조 · 연속 -1일"
     },
     {
       "key": "fx",
       "label": "원/달러",
-      "points": 4,
+      "points": 7,
       "max_points": 10,
       "available": true,
       "coverage_points": 10,
-      "reason": "USD/KRW 5일 -0.42% · 현재 1,413.5원"
+      "reason": "USD/KRW 5일 -1.66% · 현재 1,390.0원"
     },
     {
       "key": "semiconductor",
       "label": "반도체",
-      "points": 5,
+      "points": -2,
       "max_points": 10,
       "available": true,
       "coverage_points": 10,
-      "reason": "SOXX 5일 -0.53% · 한국 반도체 상대강도 +7.84%p · SOXX 20일선 상단"
+      "reason": "SOXX 5일 -4.93% · 한국 반도체 상대강도 +2.32%p · SOXX 20일선 하단"
     },
     {
       "key": "macro_risk",
       "label": "글로벌 위험",
-      "points": 0,
+      "points": 3,
       "max_points": 10,
       "available": true,
       "coverage_points": 10,
-      "reason": "VIX 15.8 (+3.7%/5D) · 달러 5일 -0.2% · 미10년 4.71% (+1bp/5D)"
+      "reason": "VIX 14.9 (+2.3%/5D) · 달러 5일 -1.2% · 미10년 4.65% (-3bp/5D)"
     },
     {
       "key": "wave",
@@ -563,24 +563,22 @@
   ],
   "reasons": {
     "bull": [
-      "외국인 3일 +5.24조 · 10일 +3.56조 · 연속 +5일",
       "1차 회복 구간 169~172 진입",
-      "SOXX 5일 -0.53% · 한국 반도체 상대강도 +7.84%p · SOXX 20일선 상단"
+      "USD/KRW 5일 -1.66% · 현재 1,390.0원",
+      "주봉 RSI 반등 · MACD 전환 미확인 (진행 주 제외)"
     ],
-    "bear": []
+    "bear": [
+      "외국인 3일 -0.34조 · 10일 +0.46조 · 연속 -1일",
+      "SOXX 5일 -4.93% · 한국 반도체 상대강도 +2.32%p · SOXX 20일선 하단"
+    ]
   },
   "change_reasons": [
-    "단기 반전 +12→+0",
-    "가격 구조 +17→+7",
-    "반도체 +10→+5"
+    "외국인 수급 +15→-4",
+    "반도체 +5→-2",
+    "원/달러 +4→+7"
   ],
   "series": {
     "EWY": [
-      {
-        "date": "2025-08-06",
-        "close": 73.18,
-        "volume": 2540793.0
-      },
       {
         "date": "2025-08-07",
         "close": 73.44,
@@ -1873,15 +1871,16 @@
       },
       {
         "date": "2026-08-18",
-        "close": 170.19,
-        "volume": 34271111.0
+        "close": 170.05,
+        "volume": 34354970.0
+      },
+      {
+        "date": "2026-08-19",
+        "close": 174.395,
+        "volume": 20070635.0
       }
     ],
     "KOSPI": [
-      {
-        "date": "2026-02-23",
-        "close": 5846.09
-      },
       {
         "date": "2026-02-24",
         "close": 5969.64
@@ -2357,13 +2356,13 @@
       {
         "date": "2026-08-18",
         "close": 6869.83
+      },
+      {
+        "date": "2026-08-19",
+        "close": 6471.17
       }
     ],
     "SOXX": [
-      {
-        "date": "2026-02-26",
-        "close": 356.8
-      },
       {
         "date": "2026-02-27",
         "close": 352.29
@@ -2839,13 +2838,13 @@
       {
         "date": "2026-08-18",
         "close": 531.39
+      },
+      {
+        "date": "2026-08-19",
+        "close": 519.67
       }
     ],
     "USDKRW": [
-      {
-        "date": "2026-05-21",
-        "close": 1505.5
-      },
       {
         "date": "2026-05-22",
         "close": 1512.0
@@ -3081,6 +3080,10 @@
       {
         "date": "2026-08-18",
         "close": 1413.5
+      },
+      {
+        "date": "2026-08-19",
+        "close": 1390.0
       }
     ]
   },
@@ -3088,38 +3091,38 @@
     {
       "name": "Nasdaq EWY historical",
       "url": "https://www.nasdaq.com/market-activity/etf/ewy/historical",
-      "as_of": "2026-08-17",
+      "as_of": "2026-08-18",
       "status": "ok"
     },
     {
       "name": "Naver KOSPI daily prices",
       "url": "https://m.stock.naver.com/domestic/index/KOSPI/total",
-      "as_of": "2026-08-18",
+      "as_of": "2026-08-19",
       "status": "ok"
     },
     {
       "name": "Naver/KRX investor trend",
       "url": "https://m.stock.naver.com/domestic/index/KOSPI/total",
-      "as_of": "2026-08-18",
+      "as_of": "2026-08-19",
       "status": "ok",
       "unit": "KRW trillion"
     },
     {
       "name": "Nasdaq SOXX historical",
       "url": "https://www.nasdaq.com/market-activity/etf/soxx/historical",
-      "as_of": "2026-08-17",
+      "as_of": "2026-08-18",
       "status": "ok"
     },
     {
       "name": "Naver domestic equities",
       "url": "https://m.stock.naver.com/domestic/stock/005930/total",
-      "as_of": "2026-08-18",
+      "as_of": "2026-08-19",
       "status": "ok"
     },
     {
       "name": "^VIX (FRED VIXCLS 대체)",
       "url": "https://finance.yahoo.com/quote/^VIX",
-      "as_of": "2026-08-18",
+      "as_of": "2026-08-19",
       "status": "proxy",
       "note": "CBOE VIX 종가",
       "tier": "proxy"
@@ -3127,14 +3130,14 @@
     {
       "name": "US Treasury 일별 수익률곡선 10Y",
       "url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates",
-      "as_of": "2026-08-18",
+      "as_of": "2026-08-19",
       "status": "ok",
       "tier": "official"
     },
     {
       "name": "DX-Y.NYB (FRED DTWEXBGS 대체)",
       "url": "https://finance.yahoo.com/quote/DX-Y.NYB",
-      "as_of": "2026-08-18",
+      "as_of": "2026-08-19",
       "status": "proxy_approx",
       "note": "DXY — 광의 무역가중 달러와 바스켓 구성이 다름",
       "tier": "proxy"
@@ -3142,13 +3145,13 @@
     {
       "name": "Naver USD/KRW reference rate",
       "url": "https://finance.naver.com/marketindex/",
-      "as_of": "2026-08-18",
+      "as_of": "2026-08-19",
       "status": "ok"
     },
     {
       "name": "Open Exchange Rates (USD/KRW)",
       "url": "https://www.exchangerate-api.com/docs/free",
-      "as_of": "2026-08-18",
+      "as_of": "2026-08-19",
       "status": "ok"
     }
   ],
