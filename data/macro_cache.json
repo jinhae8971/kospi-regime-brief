@@ -1649,24 +1649,25 @@
       "2026-09-01": 99.669998,
       "2026-09-02": 99.559998,
       "2026-09-03": 99.0,
-      "2026-09-04": 99.160004
+      "2026-09-04": 99.160004,
+      "2026-09-06": 99.144997
     }
   },
   "fred_health": {
     "VIXCLS": {
-      "fail_streak": 8,
+      "fail_streak": 9,
       "last_ok": null,
-      "last_probe": "2026-08-31"
+      "last_probe": "2026-09-07"
     },
     "DGS10": {
-      "fail_streak": 8,
+      "fail_streak": 9,
       "last_ok": null,
-      "last_probe": "2026-08-31"
+      "last_probe": "2026-09-07"
     },
     "DTWEXBGS": {
-      "fail_streak": 8,
+      "fail_streak": 9,
       "last_ok": null,
-      "last_probe": "2026-08-31"
+      "last_probe": "2026-09-07"
     }
   }
 }
